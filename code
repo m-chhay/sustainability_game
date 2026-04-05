@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC Sustainability Optimizer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f0ec;--surface:#fff;--surface2:#f8f6f2;--border:#e4e0d8;--border2:#ccc8be;
+  --text:#1a1a15;--text2:#5a5850;--text3:#9a968c;
+  --green:#2d6a1f;--green-l:#e8f4e1;--green-m:#639922;--green-d:#1a3d10;
+  --amber:#8a5a00;--amber-l:#fef3dc;
+  --red:#9a2020;--red-l:#fdeaea;
+  --blue:#0f4a8a;--blue-l:#e6f0fa;
+  --radius:10px;--radius-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ── ONBOARDING ── */
+#ob-overlay{position:fixed;inset:0;background:rgba(10,8,5,.65);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.ob-card{background:var(--surface);border-radius:18px;padding:40px 44px;max-width:520px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.22)}
+.ob-step{display:none}.ob-step.on{display:block}
+.ob-emoji{font-size:40px;margin-bottom:16px;display:block}
+.ob-title{font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.ob-body{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.ob-hint{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:12px 15px;font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:24px}
+.ob-hint strong{color:var(--text2)}
+.ob-dots{display:flex;gap:6px;margin-bottom:22px}
+.ob-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
+.ob-dot.on{background:var(--green-m)}
+.ob-nav{display:flex;justify-content:space-between;align-items:center}
+.btn-primary{padding:11px 28px;background:var(--green-m);color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-primary:hover{background:var(--green)}
+.btn-ghost{background:none;border:none;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;padding:4px}
+.btn-ghost:hover{color:var(--text2)}
+
+/* ── TOOLTIP ── */
+#tip{position:fixed;background:var(--text);color:#f0ede6;padding:9px 13px;border-radius:9px;font-size:11.5px;max-width:240px;line-height:1.55;z-index:400;pointer-events:none;opacity:0;transition:opacity .15s;font-family:'DM Sans',sans-serif}
+#tip.show{opacity:1}
+.tip-i{width:14px;height:14px;border-radius:50%;background:var(--border2);color:var(--text3);font-size:8.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:help;flex-shrink:0;vertical-align:middle;margin-left:3px;transition:background .15s}
+.tip-i:hover{background:var(--border2);color:var(--text2)}
+
+/* ── LAYOUT ── */
+.app{max-width:1320px;margin:0 auto;padding:20px 24px}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.hdr-brand{display:flex;align-items:center;gap:8px}
+.hdr-pip{width:9px;height:9px;border-radius:50%;background:var(--green-m)}
+.hdr-name{font-size:10.5px;letter-spacing:.08em;color:var(--text3);font-weight:500}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tour-btn{padding:7px 14px;border:0.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;color:var(--text2);transition:all .15s}
+.tour-btn:hover{border-color:var(--border2);background:var(--surface2)}
+
+/* ── STEP PROGRESS ── */
+.step-bar{background:var(--surface);border:0.5px solid var(--border);border-radius:11px;padding:13px 22px;margin-bottom:18px;display:flex;align-items:center;gap:0}
+.step-item{display:flex;align-items:center;gap:9px;flex:1}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text3);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+.step-num.active{background:var(--green-l);border-color:var(--green-m);color:var(--green)}
+.step-num.done{background:var(--green-m);border-color:var(--green-m);color:#fff}
+.step-label{font-size:11.5px;color:var(--text3);transition:color .3s}
+.step-label.active{color:var(--green);font-weight:500}
+.step-label.done{color:var(--green-m)}
+.step-sep{width:32px;height:1px;background:var(--border);margin:0 8px;flex-shrink:0}
+
+/* ── SIZE BUTTONS ── */
+.sz-group{display:flex;gap:4px}
+.sz-btn{padding:6px 13px;border:0.5px solid var(--border);border-radius:7px;background:var(--surface);font-family:inherit;font-size:11.5px;cursor:pointer;color:var(--text2);line-height:1.35;text-align:center;transition:all .15s}
+.sz-btn:hover{border-color:var(--border2)}
+.sz-btn.on{background:var(--green-l);border-color:var(--green-m);color:var(--green);font-weight:500}
+.sz-sub{font-size:9px;opacity:.7;display:block}
+
+/* ── 3-COLUMN MAIN ── */
+.main-grid{display:grid;grid-template-columns:262px 1fr 242px;gap:16px;align-items:start}
+
+/* ── POOL ── */
+.section-label{font-size:10px;letter-spacing:.06em;color:var(--text3);font-weight:500}
+.pool-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;cursor:grab;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;user-select:none;transition:all .15s;position:relative}
+.pool-card:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,.06);transform:translateY(-1px)}
+.pool-card.dragging{opacity:.2;transform:scale(.97)}
+.badge{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;font-weight:500;flex-shrink:0;pointer-events:none;letter-spacing:.05em}
+.pool-name{font-size:12px;font-weight:600;margin-bottom:1px;color:var(--text)}
+.pool-meta{font-size:10px;color:var(--text3);margin-bottom:5px}
+.pool-tags{display:flex;gap:3px;flex-wrap:wrap;align-items:center}
+.ctag{font-size:8px;padding:2px 5px;border-radius:3px;white-space:nowrap;line-height:1.8;font-weight:500}
+.cplx{font-size:8px;padding:2px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
+.cL{background:#e8f4e1;color:#2d6a1f}.cM{background:#fef3dc;color:#8a5a00}.cH{background:#fdeaea;color:#9a2020}
+.s3{background:#ede8ff;color:#5c3daa;font-size:8px;padding:2px 5px;border-radius:3px;font-weight:500;white-space:nowrap}
+.trash-drop{border:1px dashed var(--border2);border-radius:9px;padding:10px;text-align:center;margin-top:8px;color:var(--text3);font-size:11px;transition:all .15s}
+.trash-drop.over{border-color:#E24B4A;background:#fdeaea;color:#9a2020}
+
+/* ── DC GRID ── */
+.dc-cell{min-height:90px;border:1px dashed var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative;background:transparent}
+.dc-cell.has-item{border-style:solid}
+.dc-cell.over{border:2px solid #378ADD!important;background:#e6f0fa!important}
+.dc-cell.empty-cell{flex-direction:column;gap:5px;cursor:default}
+.placed{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px;border-radius:9px;min-height:90px;cursor:grab;position:relative}
+.rm-x{position:absolute;top:4px;right:4px;width:17px;height:17px;border-radius:50%;background:rgba(0,0,0,.15);border:none;cursor:pointer;font-size:11px;color:#fff;display:flex;align-items:center;justify-content:center;z-index:2;line-height:1;transition:background .15s}
+.rm-x:hover{background:rgba(160,20,20,.85)}
+
+/* ── METERS ── */
+.meter-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:11px 14px}
+.meter-val{font-size:24px;font-weight:500;line-height:1;margin:3px 0 2px;transition:color .4s}
+.meter-track{background:var(--surface2);border-radius:4px;height:5px;margin-top:7px;overflow:hidden}
+.meter-fill{height:100%;border-radius:4px;transition:width .6s ease,background .4s}
+
+/* ── ENV CARDS ── */
+.env-card{background:var(--surface2);border-radius:9px;padding:10px 13px;margin-bottom:8px}
+.env-label{font-size:10px;color:var(--text3);margin-bottom:2px;display:flex;align-items:center}
+.env-val{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2}
+.env-sub{font-size:9px;color:var(--text3);margin-top:2px}
+
+/* ── PROGRESS ── */
+.prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:11px;margin-bottom:3px}
+.prog-track{background:var(--border);border-radius:3px;height:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:var(--green-m);transition:width .4s ease}
+
+/* ── COMPLIANCE ── */
+.compliance-box{background:var(--surface2);border-radius:9px;padding:10px 13px;margin-bottom:8px;display:none}
+
+/* ── TABS ── */
+.tabs-section{margin-top:22px}
+.tab-bar{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:0}
+.tab-btn{padding:10px 20px;background:transparent;border:none;border-bottom:2.5px solid transparent;font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text3);transition:all .15s;margin-bottom:-1.5px;white-space:nowrap}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.on{color:var(--green);border-bottom-color:var(--green-m)}
+.tab-panel{background:var(--surface);border:0.5px solid var(--border);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);padding:24px;display:none;min-height:220px}
+.tab-panel.on{display:block}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.empty-title{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.empty-body{font-size:12px;line-height:1.65}
+
+/* ── ROI CARDS ── */
+.roi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.roi-card{background:var(--surface2);border-radius:10px;padding:12px 14px}
+.roi-label{font-size:10px;color:var(--text3);margin-bottom:5px;display:flex;align-items:center;gap:3px}
+.roi-val{font-size:16px;font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums}
+.roi-sub{font-size:9px;color:var(--text3);margin-top:3px}
+
+/* ── TIMELINE SEGS ── */
+.seg-bar{display:flex;gap:4px}
+.seg{flex:1;height:26px;border-radius:5px;cursor:default;transition:background .3s,filter .15s;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.85);font-weight:500}
+.seg:hover{filter:brightness(1.12)}
+.seg-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px;padding:0 2px}
+
+/* ── SLIDERS ── */
+.slider-wrap{background:var(--surface2);border-radius:11px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.slider-label{font-size:11.5px;color:var(--text2);min-width:140px}
+.slider-wrap input[type=range]{flex:1;min-width:120px;accent-color:var(--green-m)}
+.slider-readout{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;min-width:58px;text-align:right;color:var(--text)}
+
+/* ── ASSUMPTIONS BOX ── */
+.assum{background:#fffbf0;border:0.5px solid #e8c96a;border-radius:9px;padding:12px 15px;font-size:11px;color:#7a5a00;line-height:1.65;margin-top:14px}
+
+/* ── ROADMAP ── */
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.phase-col{border:0.5px solid var(--border);border-radius:11px;overflow:hidden}
+.phase-hd{padding:14px 16px;border-bottom:0.5px solid var(--border)}
+.phase-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;margin-bottom:6px}
+.phase-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.phase-time{font-size:10px;color:var(--text3)}
+.phase-body{padding:12px 16px;min-height:100px}
+.phase-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:0.5px solid var(--surface2)}
+.phase-item:last-child{border-bottom:none}
+.phase-empty{font-size:11px;color:var(--text3);text-align:center;padding:20px 0;font-style:italic}
+.phase-totals{background:var(--surface2);border-top:0.5px solid var(--border);padding:10px 16px;font-size:11px;display:flex;justify-content:space-between}
+
+/* ── BENCHMARKS ── */
+.bench-section{margin-bottom:24px}
+.bench-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:12px}
+.bench-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bench-org{font-size:11px;color:var(--text2);width:120px;flex-shrink:0;text-align:right}
+.bench-track{flex:1;background:var(--surface2);border-radius:5px;height:26px;position:relative;overflow:hidden}
+.bench-fill{height:100%;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;transition:width .7s ease}
+.bench-fill-val{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:#fff}
+.bench-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;width:48px;flex-shrink:0;color:var(--text2)}
+.bench-you{position:absolute;top:0;bottom:0;border-left:2.5px solid var(--text);display:flex;align-items:center;padding-left:5px}
+.bench-you-label{font-size:8px;font-weight:600;color:var(--text);white-space:nowrap;background:var(--text);color:#fff;padding:1px 5px;border-radius:3px}
+.bench-legend{display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--text3);flex-wrap:wrap}
+.bench-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px}
+.bench-pct{font-size:12px;font-weight:500;padding:8px 14px;background:var(--green-l);border-radius:8px;color:var(--green);margin-bottom:16px;display:inline-block}
+
+/* ── BUSINESS CASE ── */
+.bc-preview{background:var(--surface2);border:0.5px solid var(--border);border-radius:11px;padding:18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;max-height:320px;overflow-y:auto}
+.copy-btn{padding:10px 22px;background:var(--green-l);border:1px solid var(--green-m);border-radius:9px;color:var(--green);font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.copy-btn:hover{background:#c8e8b0}
+.copy-ok{font-size:11.5px;color:var(--green);opacity:0;transition:opacity .4s}
+.tp-item{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.tp-num{width:22px;height:22px;border-radius:50%;background:var(--green-l);color:var(--green);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* ── METHODOLOGY ── */
+.meth{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-top:22px;overflow:hidden}
+.meth summary{padding:15px 22px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:500;user-select:none}
+.meth summary::-webkit-details-marker{display:none}
+.meth-body{padding:0 22px 22px}
+.meth-intro{font-size:11.5px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.src-row{border-top:0.5px solid var(--border);padding:9px 0;font-size:11.5px;display:flex;gap:11px;align-items:baseline;line-height:1.6;color:var(--text2)}
+.src-row:first-child{border-top:none;padding-top:0}
+.src-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.meth a{color:var(--blue)}
+.meth-disc{font-size:10px;color:var(--text3);margin-top:14px;line-height:1.65}
+
+/* ── CP BUTTONS ── */
+.cp-group{display:flex;gap:3px}
+.cp-btn{padding:5px 11px;border:0.5px solid var(--border);border-radius:7px;background:var(--surface);font-family:inherit;font-size:11px;cursor:pointer;color:var(--text2);transition:all .15s}
+.cp-btn.on{background:var(--green-l);border-color:var(--green-m);color:var(--green);font-weight:500}
+
+@media(prefers-color-scheme:dark){
+  :root{--bg:#111109;--surface:#1a1a16;--surface2:#222220;--border:#333330;--border2:#444440;--text:#f0ede6;--text2:#b0ada6;--text3:#706d65;--green:#7ec860;--green-l:#1a2e14;--green-m:#5a9a35;--green-d:#3d6a22;--amber:#c89030;--amber-l:#2a2000;--red:#c85050;--red-l:#250a0a;--blue:#5090d0;--blue-l:#0a1a2a}
+  .ob-card,.src-tag,.ctag,.cplx,.s3,.bench-you-label{filter:brightness(.9)}
+  .ob-hint{background:var(--surface2)}
+  .pool-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+  .seg{color:rgba(255,255,255,.7)}
+  .assum{background:#1a1600;border-color:#5a4200;color:#c0a040}
+}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="ob-overlay">
+<div class="ob-card">
+  <div id="ob-inner">
+    <div class="ob-step on" data-s="0">
+      <span class="ob-emoji">🌱</span>
+      <h2 class="ob-title">Welcome to the DC Sustainability Optimizer</h2>
+      <p class="ob-body">This tool helps technology leaders model the real environmental and financial impact of sustainability upgrades — and generate a board-ready business case in minutes.</p>
+      <div class="ob-hint"><strong>Who this is for:</strong> CTOs, infrastructure leads, and sustainability officers building internal alignment around data center investment priorities.</div>
+    </div>
+    <div class="ob-step" data-s="1">
+      <span class="ob-emoji">🏢</span>
+      <h2 class="ob-title">Step 1 — Choose your facility size</h2>
+      <p class="ob-body">Select the scale that best matches your data center at the top of the page. All financial figures — CapEx, annual savings, and ROI — will scale automatically with your selection.</p>
+      <div class="ob-hint"><strong>Not sure?</strong> Start with <strong>Mid-size (~5 MW)</strong> — it's the most common scenario for enterprise planning conversations and gives the most relatable numbers.</div>
+    </div>
+    <div class="ob-step" data-s="2">
+      <span class="ob-emoji">🖱️</span>
+      <h2 class="ob-title">Step 2 — Drag upgrades into your data center</h2>
+      <p class="ob-body">The left panel lists 8 sustainability initiatives. Drag any of them into the 8-slot grid. You can place multiple of the same upgrade, rearrange slots, or remove any card with the × button.</p>
+      <div class="ob-hint">Each card shows: CO₂ impact · upfront cost · implementation complexity · phase timing · which compliance frameworks it supports · whether it reduces Scope 3.</div>
+    </div>
+    <div class="ob-step" data-s="3">
+      <span class="ob-emoji">📊</span>
+      <h2 class="ob-title">Step 3 — Explore four views of your impact</h2>
+      <p class="ob-body">As you configure your data center, four tabs update in real time:</p>
+      <div class="ob-hint">
+        <strong>Roadmap</strong> — phased 90-day → 3-year implementation plan<br>
+        <strong>Financials</strong> — CapEx, break-even, 10-year net with energy &amp; carbon price controls<br>
+        <strong>Peer Benchmarks</strong> — how your PUE &amp; WUE compare to Google, Microsoft, AWS<br>
+        <strong>Business Case</strong> — formatted summary ready to copy into a deck
+      </div>
+    </div>
+  </div>
+  <div class="ob-dots" id="ob-dots"></div>
+  <div class="ob-nav">
+    <button class="btn-ghost" onclick="closeOb()">Skip intro</button>
+    <button class="btn-primary" id="ob-next-btn" onclick="obNext()">Get started →</button>
+  </div>
+</div>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tip"></div>
+
+<!-- APP -->
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-pip"></div>
+    <span class="hdr-name">DATA CENTER SUSTAINABILITY OPTIMIZER</span>
+  </div>
+  <div class="hdr-right">
+    <button class="tour-btn" onclick="startTour()">❓ How to use</button>
+    <span style="font-size:11px;color:var(--border2)">|</span>
+    <span style="font-size:11.5px;color:var(--text3)">Facility size:</span>
+    <div class="sz-group" id="sz-btns"></div>
+  </div>
+</div>
+
+<!-- STEP PROGRESS BAR -->
+<div class="step-bar" id="step-bar"></div>
+
+<!-- MAIN 3-COL -->
+<div class="main-grid">
+
+  <!-- LEFT: POOL -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span class="section-label">AVAILABLE UPGRADES</span>
+      <span style="font-size:10px;color:var(--text3)">drag to grid →</span>
+    </div>
+    <div id="pool"></div>
+    <div id="trash" class="trash-drop" ondragover="tOv(event)" ondragleave="tLv()" ondrop="tDr(event)">× drag here to remove an upgrade</div>
+  </div>
+
+  <!-- CENTER: GRID + METERS -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:15px;font-weight:600">Your Data Center</span>
+      <span style="font-size:10px;color:var(--text3)">8 slots · click × on a card to remove</span>
+    </div>
+    <div style="background:var(--surface2);padding:12px;border-radius:var(--radius-lg)">
+      <div id="dc-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
+    </div>
+    <!-- PUE + WUE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+      <div class="meter-card">
+        <div style="display:flex;align-items:center;font-size:10px;color:var(--text3);margin-bottom:3px">PUE<span class="tip-i" onmouseenter="st(event,'Power Usage Effectiveness — ratio of total facility energy to IT load. Lower is better. 1.0 = perfect; 1.58 = 2023 global average (Uptime Institute).')" onmouseleave="ht()">?</span></div>
+        <div class="meter-val" id="pue-v">1.58</div>
+        <div class="meter-track"><div class="meter-fill" id="pue-f" style="width:100%;background:#E24B4A"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:3px">Avg 1.58 · Best-in-class 1.04</div>
+      </div>
+      <div class="meter-card">
+        <div style="display:flex;align-items:center;font-size:10px;color:var(--text3);margin-bottom:3px">WUE<span class="tip-i" onmouseenter="st(event,'Water Usage Effectiveness — liters of water used per kWh of IT load. Lower is better. Industry avg = 1.80 L/kWh.')" onmouseleave="ht()">?</span></div>
+        <div class="meter-val" id="wue-v">1.80</div>
+        <div class="meter-track"><div class="meter-fill" id="wue-f" style="width:100%;background:#E24B4A"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:3px">Avg 1.80 · Best-in-class 0.50 L/kWh</div>
+      </div>
+    </div>
+    <div class="prog-label"><span>Sustainability potential unlocked</span><span id="pct">0%</span></div>
+    <div class="prog-track"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- RIGHT: ENV + COMPLIANCE -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span class="section-label">ANNUAL ENVIRONMENTAL IMPACT</span>
+    </div>
+    <div class="env-card">
+      <div class="env-label">CO₂ saved<span class="tip-i" onmouseenter="st(event,'Metric tons of CO₂ emissions avoided per year vs. a fossil-fuel baseline. Scales with your facility size selection.')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-co2">0</span><span style="font-size:12px;color:var(--text3)"> t/yr</span></div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Trees equivalent<span class="tip-i" onmouseenter="st(event,'Tree seedlings that would need to grow for 10 years to sequester the same CO₂ (EPA GHG Equivalencies Calculator: 16.5 seedlings per metric ton).')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-trees">0</span></div>
+      <div class="env-sub">seedlings × 10 yrs · EPA</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Cars off the road<span class="tip-i" onmouseenter="st(event,'Equivalent passenger vehicles removed from roads for a year. EPA: 4.29 metric tons CO₂e per vehicle/year.')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-cars">0</span></div>
+      <div class="env-sub">4.29 t CO₂/car/yr · EPA</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Flights avoided<span class="tip-i" onmouseenter="st(event,'NYC to London economy roundtrips avoided (~1.1 t CO₂ per person, ICAO standard estimate).')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-flights">0</span></div>
+      <div class="env-sub">NYC–London roundtrip · ICAO</div>
+    </div>
+    <div class="compliance-box" id="comp-box">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:6px">COMPLIANCE COVERAGE</div>
+      <div id="v-comp" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+
+</div><!-- /main-grid -->
+
+<!-- TABS -->
+<div class="tabs-section">
+  <div class="tab-bar">
+    <button class="tab-btn on" onclick="showTab('roadmap',this)">🗺 Roadmap</button>
+    <button class="tab-btn" onclick="showTab('financials',this)">💰 Financials</button>
+    <button class="tab-btn" onclick="showTab('benchmarks',this)">📊 Peer Benchmarks</button>
+    <button class="tab-btn" onclick="showTab('bizcase',this)">📋 Business Case</button>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="tab-panel on" id="tab-roadmap">
+    <div id="roadmap-content"></div>
+  </div>
+
+  <!-- FINANCIALS -->
+  <div class="tab-panel" id="tab-financials">
+    <div id="fin-content"></div>
+  </div>
+
+  <!-- BENCHMARKS -->
+  <div class="tab-panel" id="tab-benchmarks">
+    <div id="bench-content"></div>
+  </div>
+
+  <!-- BUSINESS CASE -->
+  <div class="tab-panel" id="tab-bizcase">
+    <div id="bc-content"></div>
+  </div>
+</div>
+
+<!-- METHODOLOGY -->
+<details class="meth">
+  <summary>
+    <span>Methodology, costs &amp; sources</span>
+    <span style="font-size:10px;color:var(--text3)">▶</span>
+  </summary>
+  <div class="meth-body">
+    <p class="meth-intro">All CO₂ and financial figures are calibrated for a <strong>5 MW mid-size data center baseline</strong> and scale with the facility size selector. CapEx and savings estimates are drawn from published studies, government reports, and vendor case studies — they represent order-of-magnitude figures suitable for business case planning, not formal capital projections. IRA tax credits, utility rebates, and solar PPAs can materially improve ROI figures shown. EPA GHG Equivalencies Calculator conversion factors are used throughout for trees, cars, and flights. PUE baseline of 1.58 and WUE baseline of 1.80 reflect the 2023 global industry averages per Uptime Institute.</p>
+    <div class="src-row" style="border-top:none">
+      <span class="src-tag" style="background:#e8f4e1;color:#2d6a1f">Equivalencies</span>
+      <span>Trees: 16.5 seedlings per metric ton CO₂ grown for 10 years. Cars: 4.29 metric tons CO₂e/vehicle/year. Flights: ~1.1 t CO₂ per person NYC–London economy roundtrip. All from <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator-calculations-and-references" target="_blank">EPA GHG Equivalencies Calculator</a>.</span>
+    </div>
+    <div class="src-row"><span class="src-tag" style="background:#fef8ee;color:#8a5a00">Solar Array</span><span><strong>CO₂:</strong> ~450 t/yr · <strong>CapEx:</strong> ~$3.5M (utility-scale ~$0.50–$0.70/W installed) · <strong>Savings:</strong> ~$700k/yr at $0.08/kWh. Lawrence Berkeley National Laboratory: utility-scale solar saves 175–198 t CO₂/acre/yr. IEA (2024): global solar avoids ~1.4 Gt/yr. Source: <a href="https://www.solarfeeds.com/mag/solar-for-data-centers-reducing-costs-and-carbon-footprint/" target="_blank">SolarFeeds</a>, <a href="https://8msolar.com/solar-powered-data-centers/" target="_blank">8MSolar</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#e6f0fa;color:#0f4a8a">Liquid Cooling</span><span><strong>CO₂:</strong> ~280 t/yr · <strong>CapEx:</strong> ~$1.2M · <strong>Savings:</strong> ~$480k/yr (12% total facility energy reduction). Google: water cooling reduced global portfolio footprint by ~300,000 t CO₂ in 2021. Sources: <a href="https://blog.google/company-news/outreach-and-initiatives/sustainability/our-commitment-to-climate-conscious-data-center-cooling/" target="_blank">Google</a>; <a href="https://www.sciencedirect.com/science/article/pii/S2666792426000089" target="_blank">ScienceDirect 2025</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#ede8ff;color:#5c3daa">Server Virtualization</span><span><strong>CO₂:</strong> ~320 t/yr (Scope 1+2+3) · <strong>CapEx:</strong> ~$400k · <strong>Savings:</strong> ~$520k/yr; break-even often &lt;1 year. Reduces Scope 3 by lowering physical server demand and manufacturing emissions. University of Waterloo: 30% energy reductions from architecture changes alone. Source: <a href="https://spectrum.ieee.org/data-center-sustainability-metrics" target="_blank">IEEE Spectrum 2026</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#e8f4e1;color:#2d6a1f">Battery Storage</span><span><strong>CO₂:</strong> ~180 t/yr · <strong>CapEx:</strong> ~$2M (2 MWh BESS at ~$800–$1,000/kWh) · <strong>Savings:</strong> ~$250k/yr via demand charge reduction. Longer break-even (~8 yrs) but provides grid resilience. Source: <a href="https://www.scalemicrogrids.com/blog/solar-microgrids-for-data-centers-not-as-crazy-as-it-sounds" target="_blank">Scale Microgrids / Stripe 2025</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#e0f5ef;color:#0f5a45">Free Air Cooling</span><span><strong>CO₂:</strong> ~200 t/yr · <strong>CapEx:</strong> ~$600k · <strong>Savings:</strong> ~$340k/yr. Cooling accounts for ~40% of facility energy; economizers cut mechanical cooling 50–80% in temperate climates. Source: <a href="https://www.energy.ca.gov/publications/2024/demonstration-low-cost-data-center-liquid-cooling" target="_blank">California Energy Commission 2024</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#fdeaea;color:#9a2020">Smart PDU</span><span><strong>CO₂:</strong> ~150 t/yr · <strong>CapEx:</strong> ~$200k · <strong>Savings:</strong> ~$180k/yr (3–5% total energy via idle elimination). EkkoSense: ~4,100 t CO₂e/yr reductions across customer base. Source: <a href="https://venturebeat.com/data-infrastructure/revolutionizing-data-center-cooling-a-path-to-energy-efficiency-and-sustainability" target="_blank">VentureBeat 2024</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#fdeef4;color:#8a1a5a">AI Load Balancing</span><span><strong>CO₂:</strong> ~240 t/yr · <strong>CapEx:</strong> ~$380k · <strong>Savings:</strong> ~$380k/yr (10–12% total energy). Cornell University (2025): AI-driven scheduling + advanced cooling could cut DC CO₂ by up to 73% vs. worst-case AI growth. Source: <a href="https://news.cornell.edu/stories/2025/11/roadmap-shows-environmental-impact-ai-data-center-boom" target="_blank">Cornell Chronicle 2025</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#f5f5f0;color:#555540">Heat Recovery</span><span><strong>CO₂:</strong> ~120 t/yr · <strong>CapEx:</strong> ~$700k · <strong>Savings:</strong> ~$160k/yr. Waste heat recovery reduces CO₂ by 3,000–9,200 t/yr in 4.5–13.5 MW facilities, payback under 2.6 years. Source: <a href="https://www.sciencedirect.com/science/article/pii/S0306261923018378" target="_blank">Applied Energy 2024</a>.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#e6f0fa;color:#0f4a8a">Carbon pricing</span><span>Internal carbon prices of $50–$200/ton reflect enterprise planning ranges. IEA: $130+/ton needed for net-zero pathways by 2050. SEC climate disclosure rules (US, 2024–2026) and EU CSRD (mandatory 2024+) are driving internal carbon price adoption.</span></div>
+    <div class="src-row"><span class="src-tag" style="background:#ede8ff;color:#5c3daa">Compliance</span><span><strong>CSRD</strong> EU Corporate Sustainability Reporting Directive · <strong>Scope 2</strong> indirect emissions from purchased electricity · <strong>Scope 3</strong> value chain emissions including hardware manufacturing · <strong>ISO 50001</strong> energy management standard · <strong>RE100</strong> 100% renewable commitment · <strong>SEC Climate</strong> US disclosure requirements · <strong>Grid Resilience</strong> reduced grid dependency.</span></div>
+    <p class="meth-disc">Figures are illustrative estimates for educational use only. Break-even calculations assume constant energy prices and exclude maintenance, equipment degradation, and policy incentives which typically improve ROI materially. Peer benchmark figures from public disclosures: Google Environmental Report 2023, Microsoft Environmental Sustainability Report 2023, AWS Sustainability Report 2023, Uptime Institute Global Data Center Survey 2023.</p>
+  </div>
+</details>
+
+</div><!-- /app -->
+
+<script>
+/* ═══════════════ DATA ═══════════════ */
+const SIZES=[
+  {id:'edge',      label:'Edge',       sub:'~1 MW',  cm:0.20, fm:0.28, sm:0.19},
+  {id:'mid',       label:'Mid-size',   sub:'~5 MW',  cm:1,    fm:1,    sm:1},
+  {id:'large',     label:'Large',      sub:'~20 MW', cm:4,    fm:3.4,  sm:4.1},
+  {id:'hyper',     label:'Hyperscale', sub:'~100 MW',cm:20,   fm:14,   sm:22},
+];
+const CPS=[{l:'None',v:0},{l:'$50/t',v:50},{l:'$100/t',v:100},{l:'$200/t',v:200}];
+const TC={
+  'Scope 2':['#e6f0fa','#0f4a8a'],'Scope 3':['#ede8ff','#5c3daa'],'CSRD':['#ede8ff','#5c3daa'],
+  'ISO 50001':['#e0f5ef','#0f5a45'],'RE100':['#e8f4e1','#2d6a1f'],'SEC Climate':['#fef3dc','#8a5a00'],
+  'Grid Resilience':['#fef3dc','#7a4a00'],'Circular Economy':['#fdeaea','#9a2020'],
+};
+const UPG=[
+  {id:'solar',  name:'Solar Array',          abbr:'SOL',co2:450,bg:'#F5B84A',tc:'#3d2600',capex:3500000,sav:700000,pue:0,   wue:0,    phase:3,cplx:'H',time:'24–36 months',scope3:false,
+   tags:['Scope 2','RE100','CSRD','SEC Climate'],why:'Eliminates purchased electricity carbon (Scope 2). Solar PPAs can reduce CapEx to $0.',cnote:'Requires site survey, utility interconnection, permitting, and 2–3 year construction.'},
+  {id:'liquid', name:'Liquid Cooling',        abbr:'LQD',co2:280,bg:'#5B9FD4',tc:'#04244a',capex:1200000,sav:480000,pue:-0.08,wue:-0.15,phase:2,cplx:'H',time:'12–24 months',scope3:false,
+   tags:['ISO 50001','CSRD'],why:'Reduces cooling energy 10–18%, lowers water evaporation vs. air cooling.',cnote:'Requires infrastructure retrofit; potential downtime during installation. Plan around maintenance windows.'},
+  {id:'virtual',name:'Server Virtualization', abbr:'VRT',co2:320,bg:'#8B7FD4',tc:'#1a1040',capex:400000, sav:520000,pue:-0.03,wue:-0.05,phase:1,cplx:'L',time:'1–6 months',scope3:true,
+   tags:['CSRD','SEC Climate'],why:'Reduces physical server count, cutting compute energy and hardware manufacturing emissions (Scope 3).',cnote:'Lowest complexity. Can start immediately with existing hypervisor licenses. Strong quick-win ROI.'},
+  {id:'battery',name:'Battery Storage',       abbr:'BAT',co2:180,bg:'#6DC05A',tc:'#0f2c06',capex:2000000,sav:250000,pue:0,   wue:0,    phase:3,cplx:'H',time:'12–24 months',scope3:false,
+   tags:['Scope 2','Grid Resilience'],why:'Enables renewable time-shifting and reduces demand charges. Provides resilience against grid outages.',cnote:'Longer payback (~8 yrs) but provides critical grid independence and supports RE100 compliance.'},
+  {id:'freeair',name:'Free Air Cooling',      abbr:'AIR',co2:200,bg:'#4BBFAA',tc:'#04302a',capex:600000, sav:340000,pue:-0.10,wue:-0.25,phase:2,cplx:'M',time:'6–12 months',scope3:false,
+   tags:['ISO 50001','CSRD'],why:'Eliminates or reduces mechanical chilling using ambient air. Best ROI in temperate climates.',cnote:'Climate-dependent — most effective in northern latitudes. Assess local weather patterns before committing.'},
+  {id:'pdu',    name:'Smart PDU',             abbr:'PDU',co2:150,bg:'#E8845A',tc:'#3a1000',capex:200000, sav:180000,pue:-0.03,wue:-0.02,phase:1,cplx:'L',time:'1–3 months',scope3:false,
+   tags:['ISO 50001'],why:'Granular load monitoring eliminates idle draw and enables real-time power optimization.',cnote:'Lowest upfront cost and fastest installation. Excellent standalone quick win. Pairs well with virtualization.'},
+  {id:'ai',     name:'AI Load Balancing',     abbr:'A.I',co2:240,bg:'#D484A8',tc:'#2a0820',capex:380000, sav:380000,pue:-0.05,wue:-0.08,phase:2,cplx:'M',time:'6–12 months',scope3:false,
+   tags:['CSRD','SEC Climate'],why:'Intelligent workload scheduling improves server utilization and coordinates cooling for 10–12% total energy reduction.',cnote:'Requires integration with existing DCIM and orchestration systems. Medium implementation complexity.'},
+  {id:'heat',   name:'Heat Recovery',         abbr:'REC',co2:120,bg:'#9E9E90',tc:'#202018',capex:700000, sav:160000,pue:-0.02,wue:-0.05,phase:2,cplx:'M',time:'12–18 months',scope3:false,
+   tags:['CSRD','Circular Economy'],why:'Captures waste heat from liquid-cooled racks for building heating, reducing district energy consumption.',cnote:'Requires heat demand on-site or nearby. Most effective in cold climates with nearby buildings to supply.'},
+];
+const BASE_PUE=1.58,BASE_WUE=1.80,MIN_PUE=1.04,MIN_WUE=0.50;
+const MAX_CO2=450*8;
+const PEERS_PUE=[
+  {name:'Google',val:1.10,color:'#4285F4'},{name:'Microsoft',val:1.18,color:'#00A4EF'},
+  {name:'Apple',val:1.20,color:'#555'},{name:'AWS',val:1.22,color:'#FF9900'},
+  {name:'Industry avg',val:1.58,color:'#aaa'},{name:'Your DC',val:null,color:'#2d6a1f',you:true},
+];
+const PEERS_WUE=[
+  {name:'Google',val:1.10,color:'#4285F4'},{name:'Microsoft',val:1.12,color:'#00A4EF'},
+  {name:'AWS',val:1.35,color:'#FF9900'},{name:'Industry avg',val:1.80,color:'#aaa'},
+  {name:'Your DC',val:null,color:'#2d6a1f',you:true},
+];
+const PHASE_META=[
+  {n:1,label:'Phase 1',sub:'Quick Wins',time:'0–90 days',bg:'#e8f4e1',bc:'#2d6a1f',tc:'#2d6a1f',desc:'High-ROI, low-disruption changes that can be approved and deployed quickly with minimal capital.'},
+  {n:2,label:'Phase 2',sub:'Infrastructure',time:'6–18 months',bg:'#e6f0fa',bc:'#0f4a8a',tc:'#0f4a8a',desc:'Infrastructure upgrades requiring planning, procurement, and scheduled maintenance windows.'},
+  {n:3,label:'Phase 3',sub:'Capital Projects',time:'2–3 years',bg:'#fef3dc',bc:'#8a5a00',tc:'#8a5a00',desc:'Large capital investments requiring board approval, utility coordination, and multi-year timelines.'},
+];
+
+/* ═══════════════ STATE ═══════════════ */
+let grid=new Array(8).fill(null),sIdx=1,cpIdx=0,energyRate=0.08;
+let dragId=null,dragSrc=null,dragCi=null;
+const cur={co2:0,trees:0,cars:0,flights:0};
+let obStep=0;
+
+/* ═══════════════ INIT UI ═══════════════ */
+// Size buttons
+document.getElementById('sz-btns').innerHTML=SIZES.map((s,i)=>
+  `<button class="sz-btn${i===1?' on':''}" onclick="setSz(${i})">${s.label}<span class="sz-sub">${s.sub}</span></button>`).join('');
+
+// Step bar
+function rStepBar(){
+  const placed=grid.filter(Boolean).length;
+  const steps=[
+    {n:1,label:'Choose facility size',done:true,active:placed===0},
+    {n:2,label:'Add sustainability upgrades',done:placed>0,active:placed>0&&placed<4},
+    {n:3,label:'Explore your impact',done:placed>=4,active:placed>=4},
+    {n:4,label:'Export business case',done:false,active:false},
+  ];
+  document.getElementById('step-bar').innerHTML=steps.map((s,i)=>`
+    ${i>0?'<div class="step-sep"></div>':''}
+    <div class="step-item">
+      <div class="step-num ${s.done?'done':s.active?'active':''}">${s.done?'✓':s.n}</div>
+      <span class="step-label ${s.done?'done':s.active?'active':''}">${s.label}</span>
+    </div>`).join('');
+}
+
+// Onboarding
+const OB_TOTAL=4;
+function rObDots(){
+  document.getElementById('ob-dots').innerHTML=Array.from({length:OB_TOTAL},(_,i)=>
+    `<div class="ob-dot${i===obStep?' on':''}"></div>`).join('');
+}
+function obNext(){
+  obStep++;
+  if(obStep>=OB_TOTAL){closeOb();return;}
+  document.querySelectorAll('.ob-step').forEach((el,i)=>el.classList.toggle('on',i===obStep));
+  document.getElementById('ob-next-btn').textContent=obStep===OB_TOTAL-1?'Start exploring →':'Next →';
+  rObDots();
+}
+function closeOb(){document.getElementById('ob-overlay').style.display='none';}
+function startTour(){obStep=0;document.querySelectorAll('.ob-step').forEach((el,i)=>el.classList.toggle('on',i===0));document.getElementById('ob-next-btn').textContent='Next →';rObDots();document.getElementById('ob-overlay').style.display='flex';}
+rObDots();
+
+/* ═══════════════ TOOLTIP ═══════════════ */
+const tipEl=document.getElementById('tip');
+function st(e,txt){
+  tipEl.textContent=txt; tipEl.classList.add('show');
+  const x=Math.min(e.clientX+12,window.innerWidth-250), y=e.clientY+16;
+  tipEl.style.left=x+'px'; tipEl.style.top=y+'px';
+}
+function ht(){tipEl.classList.remove('show');}
+
+/* ═══════════════ TAGS ═══════════════ */
+function tagPills(tags){
+  return tags.map(t=>{const[bg,fc]=TC[t]||['#eee','#555'];return`<span class="ctag" style="background:${bg};color:${fc}">${t}</span>`;}).join('');
+}
+function fmt(n){
+  const a=Math.abs(n),s=n<0?'-':'';
+  if(a>=1000000)return s+'$'+(Math.round(a/100000)/10)+'M';
+  if(a>=1000)return s+'$'+Math.round(a/1000)+'k';
+  return s+'$'+Math.round(a);
+}
+function animV(id,target,key){
+  const el=document.getElementById(id); const start=cur[key]||0; cur[key]=target;
+  if(start===target)return;
+  const diff=target-start; let step=0;
+  const iv=setInterval(()=>{step++;el.textContent=Math.round(start+diff*(step/20)).toLocaleString();if(step>=20)clearInterval(iv);},14);
+}
+
+/* ═══════════════ SETTERS ═══════════════ */
+function setSz(i){sIdx=i;document.querySelectorAll('.sz-btn').forEach((b,j)=>b.classList.toggle('on',j===i));render();}
+function setCP(i){cpIdx=i;document.querySelectorAll('.cp-btn').forEach((b,j)=>b.classList.toggle('on',j===i));rFinancials();}
+
+/* ═══════════════ RENDER: POOL ═══════════════ */
+function rPool(){
+  document.getElementById('pool').innerHTML=UPG.map(u=>`
+    <div class="pool-card" id="pc-${u.id}" draggable="true"
+      ondragstart="dPS(event,'${u.id}')" ondragend="dEnd()"
+      onmouseenter="st(event,'${u.why} ${u.cnote}')" onmouseleave="ht()">
+      <div class="badge" style="background:${u.bg};color:${u.tc}">${u.abbr}</div>
+      <div style="flex:1;min-width:0">
+        <div class="pool-name">${u.name}</div>
+        <div class="pool-meta">${u.co2}t CO₂/yr · ${fmt(u.capex)} capex</div>
+        <div class="pool-tags">
+          <span class="cplx c${u.cplx}" title="${u.time}">${u.cplx==='L'?'Low':u.cplx==='M'?'Medium':'High'} complexity</span>
+          <span class="ctag" style="background:#f0ede6;color:var(--text3);font-size:8px">Ph.${u.phase}</span>
+          ${u.scope3?'<span class="s3">Scope 3</span>':''}
+          ${tagPills(u.tags.slice(0,2))}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════ RENDER: GRID ═══════════════ */
+function rGrid(){
+  document.getElementById('dc-grid').innerHTML=grid.map((u,i)=>{
+    if(u)return`<div class="dc-cell has-item" data-ci="${i}" style="border-color:${u.bg}66"
+      ondragover="cOv(event,${i})" ondragleave="cLv(event)" ondrop="cDr(event,${i})">
+      <div class="placed" style="background:${u.bg}20" draggable="true"
+        ondragstart="dCS(event,${i})" ondragend="dEnd()">
+        <button class="rm-x" onclick="rmC(event,${i})" title="Remove">×</button>
+        <div class="badge" style="background:${u.bg};color:${u.tc}">${u.abbr}</div>
+        <div style="font-size:9px;font-weight:600;text-align:center;line-height:1.3;pointer-events:none;color:var(--text)">${u.name}</div>
+        <div style="font-size:8.5px;color:var(--text3);pointer-events:none">${u.co2}t · ${fmt(u.capex)}</div>
+      </div></div>`;
+    return`<div class="dc-cell empty-cell" data-ci="${i}"
+      ondragover="cOv(event,${i})" ondragleave="cLv(event)" ondrop="cDr(event,${i})">
+      <span style="font-size:22px;color:var(--border2);pointer-events:none">+</span>
+      ${i===0?'<span style="font-size:9px;color:var(--text3);pointer-events:none">Drag here</span>':''}
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════ RENDER: METRICS ═══════════════ */
+function rMetrics(){
+  const S=SIZES[sIdx], placed=grid.filter(Boolean);
+  const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
+  const co2=Math.round(rawCO2*S.cm);
+  animV('v-co2',co2,'co2');
+  animV('v-trees',Math.round(co2*16.5),'trees');
+  animV('v-cars',Math.round(co2/4.29),'cars');
+  animV('v-flights',Math.round(co2/1.1),'flights');
+  const pct=Math.min(100,Math.round(rawCO2/MAX_CO2*100));
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('prog-bar').style.width=pct+'%';
+  // PUE
+  const pueRaw=placed.reduce((s,u)=>s+u.pue,0);
+  const pue=Math.max(MIN_PUE,+(BASE_PUE+pueRaw).toFixed(2));
+  const pueEl=document.getElementById('pue-v');
+  pueEl.textContent=pue.toFixed(2);
+  pueEl.style.color=pue<1.2?'var(--green)':pue<1.4?'#b08020':'var(--red)';
+  const puePct=Math.max(5,(1-(pue-MIN_PUE)/(BASE_PUE-MIN_PUE))*100);
+  document.getElementById('pue-f').style.width=puePct+'%';
+  document.getElementById('pue-f').style.background=pue<1.2?'var(--green-m)':pue<1.4?'#c8a020':'#E24B4A';
+  // WUE
+  const wueRaw=placed.reduce((s,u)=>s+u.wue,0);
+  const wue=Math.max(MIN_WUE,+(BASE_WUE+wueRaw).toFixed(2));
+  const wueEl=document.getElementById('wue-v');
+  wueEl.textContent=wue.toFixed(2);
+  wueEl.style.color=wue<1.0?'var(--green)':wue<1.4?'#b08020':'var(--red)';
+  const wuePct=Math.max(5,(1-(wue-MIN_WUE)/(BASE_WUE-MIN_WUE))*100);
+  document.getElementById('wue-f').style.width=wuePct+'%';
+  document.getElementById('wue-f').style.background=wue<1.0?'var(--green-m)':wue<1.4?'#c8a020':'#E24B4A';
+  // Compliance
+  const allTags=[...new Set(placed.flatMap(u=>u.tags))];
+  const cBox=document.getElementById('comp-box');
+  if(allTags.length){cBox.style.display='block';document.getElementById('v-comp').innerHTML=tagPills(allTags);}
+  else cBox.style.display='none';
+}
+
+/* ═══════════════ RENDER: ROADMAP ═══════════════ */
+function rRoadmap(){
+  const placed=grid.filter(Boolean);
+  if(!placed.length){
+    document.getElementById('roadmap-content').innerHTML=`<div class="empty-state">
+      <div class="empty-icon">🗺</div>
+      <div class="empty-title">Your implementation roadmap will appear here</div>
+      <div class="empty-body">Drag upgrades into your data center to see a phased 90-day → 3-year plan, grouped by implementation complexity.</div>
+    </div>`;return;
+  }
+  const S=SIZES[sIdx];
+  let html='<div class="phases">';
+  PHASE_META.forEach(ph=>{
+    const items=placed.filter(u=>u.phase===ph.n);
+    const phCo2=Math.round(items.reduce((s,u)=>s+u.co2,0)*S.cm);
+    const phCapex=items.reduce((s,u)=>s+u.capex,0)*S.fm;
+    const phSav=items.reduce((s,u)=>s+u.sav,0)*S.sm;
+    html+=`<div class="phase-col">
+      <div class="phase-hd" style="background:${ph.bg}30">
+        <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;margin-bottom:7px;background:${ph.bg};color:${ph.tc}">${ph.label}: ${ph.sub}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${ph.time}</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.55">${ph.desc}</div>
+      </div>
+      <div class="phase-body">
+        ${items.length?items.map(u=>`<div class="phase-item">
+          <div class="badge" style="background:${u.bg};color:${u.tc};width:28px;height:28px;font-size:8px;flex-shrink:0">${u.abbr}</div>
+          <div>
+            <div style="font-size:11.5px;font-weight:500;color:var(--text)">${u.name}</div>
+            <div style="font-size:10px;color:var(--text3)">${u.time} · ${fmt(u.capex*S.fm)} capex</div>
+          </div>
+        </div>`).join(''):'<div class="phase-empty">No upgrades in this phase yet</div>'}
+      </div>
+      ${items.length?`<div class="phase-totals">
+        <span style="color:var(--green);font-weight:500">${phCo2.toLocaleString()} t CO₂/yr saved</span>
+        <span style="color:var(--text3)">${fmt(phCapex)} capex · ${fmt(phSav)}/yr saved</span>
+      </div>`:''}
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('roadmap-content').innerHTML=html;
+}
+
+/* ═══════════════ RENDER: FINANCIALS ═══════════════ */
+function rFinancials(){
+  const S=SIZES[sIdx], placed=grid.filter(Boolean);
+  if(!placed.length){
+    document.getElementById('fin-content').innerHTML=`<div class="empty-state">
+      <div class="empty-icon">💰</div>
+      <div class="empty-title">Financial projections will appear here</div>
+      <div class="empty-body">Add upgrades to your data center to see CapEx, annual savings, break-even timeline, and 5- and 10-year net returns.</div>
+    </div>`;return;
+  }
+  const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
+  const capex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
+  const carbonVal=rawCO2*S.cm*CPS[cpIdx].v;
+  const annual=placed.reduce((s,u)=>s+u.sav,0)*S.sm + carbonVal;
+  const yr5=annual*5-capex, yr10=annual*10-capex;
+  const be=annual>0?capex/annual:null;
+
+  let html=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:2px">Financial return analysis</div>
+      <div style="font-size:11px;color:var(--text3)">All figures scaled to ${S.label} (${S.sub}) · energy cost $${energyRate.toFixed(2)}/kWh</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--text3)">Internal carbon price:</span>
+      <div class="cp-group" id="cp-btns">${CPS.map((c,i)=>`<button class="cp-btn${i===cpIdx?' on':''}" onclick="setCP(${i})">${c.l}</button>`).join('')}</div>
+    </div>
+  </div>
+  <div style="background:var(--surface2);border-radius:11px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <span style="font-size:11.5px;color:var(--text2);min-width:140px">Energy cost ($/kWh)</span>
+    <input type="range" min="5" max="18" value="${Math.round(energyRate*100)}" step="1" style="flex:1;min-width:120px;accent-color:var(--green-m)" oninput="setRate(this.value)">
+    <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;min-width:58px;text-align:right">$${energyRate.toFixed(2)}</span>
+  </div>
+  <div class="roi-grid">
+    <div class="roi-card">
+      <div class="roi-label">Total CapEx<span class="tip-i" onmouseenter="st(event,'Combined upfront investment for all selected upgrades, scaled to your facility size. IRA tax credits and solar PPAs can reduce this materially.')" onmouseleave="ht()">?</span></div>
+      <div class="roi-val">${fmt(capex)}</div>
+      <div class="roi-sub">upfront investment</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-label">Annual savings<span class="tip-i" onmouseenter="st(event,'Combined energy savings plus internal carbon value at the selected carbon price. Grows if energy prices rise.')" onmouseleave="ht()">?</span></div>
+      <div class="roi-val" style="color:var(--green)">${fmt(annual)}/yr</div>
+      <div class="roi-sub">energy${cpIdx>0?' + carbon value':''}</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-label">Break-even<span class="tip-i" onmouseenter="st(event,'Years until cumulative savings exceed total upfront investment. Does not include maintenance or incentives.')" onmouseleave="ht()">?</span></div>
+      <div class="roi-val">${be?be<1?'< 1 yr':be.toFixed(1)+' yrs':'—'}</div>
+      <div class="roi-sub">years to payback</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-label">5-year net</div>
+      <div class="roi-val" style="color:${yr5>=0?'var(--green)':'var(--red)'}">${yr5>=0?'+':''}${fmt(yr5)}</div>
+      <div class="roi-sub">cumulative savings</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-label">10-year net</div>
+      <div class="roi-val" style="color:${yr10>=0?'var(--green)':'var(--red)'}">${yr10>=0?'+':''}${fmt(yr10)}</div>
+      <div class="roi-sub">cumulative savings</div>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:7px">10-year payback timeline — hover each bar for year-by-year cumulative net</div>
+    <div class="seg-bar">${Array.from({length:10},(_,i)=>{
+      const net=annual*(i+1)-capex;
+      return`<div class="seg" style="background:${net>=0?'var(--green-m)':'#E24B4A'}" title="Year ${i+1}: ${net>=0?'+':''}${fmt(net)} cumulative net">${i+1}</div>`;
+    }).join('')}</div>
+    <div class="seg-labels"><span>Year 1</span><span>Year 3</span><span>Year 5</span><span>Year 7</span><span>Year 10</span></div>
+  </div>
+  <div class="assum">
+    <strong>Key assumptions:</strong> Constant energy price of $${energyRate.toFixed(2)}/kWh · Carbon price $${CPS[cpIdx].v}/t · No maintenance costs or equipment degradation included · IRA tax credits, utility rebates, and solar PPAs not modeled but can materially reduce CapEx and improve ROI. Consult a certified energy auditor for facility-specific projections.
+  </div>`;
+  document.getElementById('fin-content').innerHTML=html;
+}
+function setRate(v){energyRate=parseInt(v)/100;rFinancials();}
+
+/* ═══════════════ RENDER: BENCHMARKS ═══════════════ */
+function rBenchmarks(){
+  const placed=grid.filter(Boolean);
+  const pueRaw=placed.reduce((s,u)=>s+u.pue,0);
+  const yourPUE=Math.max(MIN_PUE,+(BASE_PUE+pueRaw).toFixed(2));
+  const wueRaw=placed.reduce((s,u)=>s+u.wue,0);
+  const yourWUE=Math.max(MIN_WUE,+(BASE_WUE+wueRaw).toFixed(2));
+
+  function benchChart(title,peers,yours,yourLabel,unit,maxVal,tipText){
+    const allVals=[...peers.map(p=>p.val),yours];
+    const chartMax=maxVal||Math.max(...allVals)*1.05;
+    const rows=peers.map(p=>{
+      const w=Math.round((p.val/chartMax)*100);
+      return`<div class="bench-row">
+        <div class="bench-org">${p.name}</div>
+        <div class="bench-track">
+          <div class="bench-fill" style="width:${w}%;background:${p.color}">
+            <span class="bench-fill-val">${p.val.toFixed(2)}</span>
+          </div>
+        </div>
+        <div class="bench-num">${p.val.toFixed(2)}</div>
+      </div>`;
+    });
+    const yourW=Math.round((yours/chartMax)*100);
+    const youRow=`<div class="bench-row">
+      <div class="bench-org" style="color:var(--green);font-weight:600">${yourLabel}</div>
+      <div class="bench-track">
+        <div class="bench-fill" style="width:${yourW}%;background:var(--green-m)">
+          <span class="bench-fill-val">${yours.toFixed(2)}</span>
+        </div>
+      </div>
+      <div class="bench-num" style="color:var(--green);font-weight:600">${yours.toFixed(2)}</div>
+    </div>`;
+    const betterThan=peers.filter(p=>yours<p.val).length;
+    const pctile=Math.round((betterThan/peers.length)*100);
+    return`<div class="bench-section">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div class="bench-title">${title}</div>
+        <span class="tip-i" onmouseenter="st(event,'${tipText}')" onmouseleave="ht()">?</span>
+      </div>
+      ${placed.length?`<div class="bench-pct">Your ${yourLabel}: better than ${pctile}% of peers shown</div>`:''}
+      ${rows.join('')}${youRow}
+      <div class="bench-legend">
+        <span><span class="bench-dot" style="background:#4285F4"></span>Google</span>
+        <span><span class="bench-dot" style="background:#00A4EF"></span>Microsoft</span>
+        <span><span class="bench-dot" style="background:#FF9900"></span>AWS</span>
+        <span><span class="bench-dot" style="background:#555"></span>Apple / others</span>
+        <span><span class="bench-dot" style="background:#aaa"></span>Industry avg</span>
+        <span><span class="bench-dot" style="background:var(--green-m)"></span>Your DC (projected)</span>
+      </div>
+    </div>`;
+  }
+
+  const pueChart=benchChart(
+    'Power Usage Effectiveness (PUE) — lower is better',
+    PEERS_PUE.filter(p=>!p.you),yourPUE,'Your DC','',2.0,
+    'PUE measures total facility energy vs. IT load. 1.0 is perfect; every 0.1 reduction at scale means millions in energy savings.'
+  );
+  const wueChart=benchChart(
+    'Water Usage Effectiveness (WUE L/kWh) — lower is better',
+    PEERS_WUE.filter(p=>!p.you),yourWUE,'Your DC','L/kWh',2.5,
+    'WUE measures liters of water used per kWh of IT load. Growing regulatory scrutiny as water scarcity increases globally.'
+  );
+
+  const scopeNote=`<div style="background:var(--surface2);border-radius:10px;padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text2);line-height:1.7">
+    <strong style="display:block;margin-bottom:6px">Why benchmarks matter to your board</strong>
+    Google, Microsoft, and Apple publish PUE and WUE in annual sustainability reports — and institutional investors increasingly track these metrics. 
+    If your PUE is above 1.4, you're in the bottom half of large enterprise operators. 
+    Closing the gap to hyperscaler efficiency (1.10–1.20) at a ${SIZES[sIdx].sub} facility can represent 
+    <strong style="color:var(--green)">${fmt(Math.round((BASE_PUE-1.15)*SIZES[sIdx].cm*5*8760*0.08/1000)*1000)}</strong> in additional annual energy savings beyond current levels.
+  </div>`;
+
+  document.getElementById('bench-content').innerHTML=pueChart+wueChart+scopeNote;
+}
+
+/* ═══════════════ RENDER: BUSINESS CASE ═══════════════ */
+function rBizCase(){
+  const placed=grid.filter(Boolean);
+  const S=SIZES[sIdx];
+  if(!placed.length){
+    document.getElementById('bc-content').innerHTML=`<div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">Your business case will appear here</div>
+      <div class="empty-body">Add upgrades to generate a formatted summary ready to copy into a board deck or stakeholder email.</div>
+    </div>`;return;
+  }
+  const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
+  const co2=Math.round(rawCO2*S.cm);
+  const capex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
+  const annual=placed.reduce((s,u)=>s+u.sav,0)*S.sm + rawCO2*S.cm*CPS[cpIdx].v;
+  const yr5=annual*5-capex, yr10=annual*10-capex;
+  const be=annual>0?capex/annual:null;
+  const pue=Math.max(MIN_PUE,+(BASE_PUE+placed.reduce((s,u)=>s+u.pue,0)).toFixed(2));
+  const wue=Math.max(MIN_WUE,+(BASE_WUE+placed.reduce((s,u)=>s+u.wue,0)).toFixed(2));
+  const counts={};placed.forEach(u=>counts[u.name]=(counts[u.name]||0)+1);
+  const upgList=Object.entries(counts).map(([n,c])=>c>1?`${n} ×${c}`:n).join(', ');
+  const allTags=[...new Set(placed.flatMap(u=>u.tags))];
+  const hasScope3=placed.some(u=>u.scope3);
+
+  const txt=`DATA CENTER SUSTAINABILITY — EXECUTIVE SUMMARY
+${'─'.repeat(58)}
+CONFIGURATION
+Facility:      ${S.label} (${S.sub})
+Upgrades:      ${upgList}
+
+ENVIRONMENTAL IMPACT (Annual)
+CO₂ saved:     ${co2.toLocaleString()} metric tons/yr
+Trees equiv.:  ${Math.round(co2*16.5).toLocaleString()} seedlings grown for 10 years (EPA)
+Cars removed:  ${Math.round(co2/4.29).toLocaleString()} passenger vehicles/yr (EPA)
+Flights saved: ${Math.round(co2/1.1).toLocaleString()} NYC–London roundtrips (ICAO)
+PUE impact:    ${BASE_PUE} (current) → ${pue.toFixed(2)} (projected)
+WUE impact:    ${BASE_WUE} (current) → ${wue.toFixed(2)} L/kWh (projected)
+${hasScope3?'Scope 3:       Server Virtualization reduces upstream hardware manufacturing emissions\n':''}
+FINANCIAL RETURN
+Total CapEx:   ${fmt(capex)}
+Annual savings:${fmt(annual)}/yr${CPS[cpIdx].v>0?` (incl. carbon at $${CPS[cpIdx].v}/t)`:''}
+Break-even:    ${be?be<1?'< 1 year':be.toFixed(1)+' years':'N/A'}
+5-year net:    ${(yr5>=0?'+':'')+fmt(yr5)}
+10-year net:   ${(yr10>=0?'+':'')+fmt(yr10)}
+
+COMPLIANCE COVERAGE
+${allTags.join(' · ')}
+
+IMPLEMENTATION ROADMAP
+Phase 1 (0–90 days):   ${placed.filter(u=>u.phase===1).map(u=>u.name).join(', ')||'—'}
+Phase 2 (6–18 months): ${placed.filter(u=>u.phase===2).map(u=>u.name).join(', ')||'—'}
+Phase 3 (2–3 years):   ${placed.filter(u=>u.phase===3).map(u=>u.name).join(', ')||'—'}
+
+KEY NOTES
+• CapEx may be materially reduced via IRA tax credits, utility rebates, and solar PPAs
+• Figures are illustrative estimates scaled to a ${S.sub} facility
+• Consult a certified energy auditor for facility-specific projections
+• All financial projections assume constant energy prices and exclude maintenance costs
+
+SOURCES
+EPA GHG Equivalencies Calculator · IEA 2024
+Lawrence Berkeley National Laboratory · Google Sustainability Report 2023
+Microsoft Environmental Report 2023 · Cornell University 2025
+IEEE Spectrum 2026 · Applied Energy (ScienceDirect) 2024
+California Energy Commission 2024 · Uptime Institute 2023`;
+
+  const talkingPoints=[
+    `Upgrading from PUE ${BASE_PUE} to ${pue.toFixed(2)} puts your facility ahead of the ${PEERS_PUE.filter(p=>pue<p.val&&!p.you).map(p=>p.name).join(', ')||'industry average'}.`,
+    `The ${placed.filter(u=>u.phase===1).length} quick-win upgrade${placed.filter(u=>u.phase===1).length!==1?'s':''} in Phase 1 ${placed.filter(u=>u.phase===1).length?`(${placed.filter(u=>u.phase===1).map(u=>u.name).join(', ')}) pay`:'pay'}s back in months — a strong proof-of-concept before committing to Phase 3 capital.`,
+    yr10>0?`The 10-year net return of ${fmt(yr10)} frames this as a capital allocation decision, not a cost center.`:`Adding an internal carbon price of $${CPS[1].v}/t would bring the 10-year net to ${fmt(placed.reduce((s,u)=>s+u.sav,0)*S.sm*10 - capex + rawCO2*S.cm*CPS[1].v*10)}.`,
+    `${allTags.includes('CSRD')?'CSRD and ':''} ${allTags.includes('SEC Climate')?'SEC climate disclosure rules are mandatory':'Regulatory pressure is increasing'} — these upgrades position the organization ahead of required reporting timelines.`,
+  ];
+
+  document.getElementById('bc-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px">Formatted summary</div>
+        <div class="bc-preview">${txt}</div>
+        <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+          <button class="copy-btn" onclick="doCopy(\`${txt.replace(/`/g,'\\`')}\`)">Copy to clipboard ↗</button>
+          <span id="copy-ok" class="copy-ok">Copied!</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px">Talking points for stakeholders</div>
+        ${talkingPoints.map((tp,i)=>`<div class="tp-item">
+          <div class="tp-num">${i+1}</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.65">${tp}</div>
+        </div>`).join('')}
+        <div style="background:var(--green-l);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:12px;color:var(--green);line-height:1.65">
+          <strong style="display:block;margin-bottom:4px">💡 When presenting to your CFO</strong>
+          Lead with the break-even (${be?be<1?'under 1 year':be.toFixed(1)+' years':'N/A'}) and the 10-year net (${(yr10>=0?'+':'')+fmt(yr10)}). 
+          Frame carbon price sensitivity as a risk hedge — not idealism — given SEC and CSRD disclosure requirements.
+        </div>
+      </div>
+    </div>`;
+}
+
+function doCopy(txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const ok=document.getElementById('copy-ok');
+    ok.style.opacity='1';setTimeout(()=>ok.style.opacity='0',2800);
+  }).catch(()=>alert('Copy failed — your browser may require manual copy from the text box.'));
+}
+
+/* ═══════════════ TABS ═══════════════ */
+function showTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+  if(id==='financials')rFinancials();
+  if(id==='benchmarks')rBenchmarks();
+  if(id==='bizcase')rBizCase();
+}
+
+/* ═══════════════ DRAG ═══════════════ */
+function dPS(e,id){
+  dragId=id;dragSrc='pool';dragCi=null;
+  e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id);
+  setTimeout(()=>{const el=document.getElementById('pc-'+id);if(el)el.classList.add('dragging');},0);
+}
+function dCS(e,i){
+  dragId=grid[i].id;dragSrc='cell';dragCi=i;
+  e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',dragId);e.stopPropagation();
+}
+function dEnd(){
+  document.querySelectorAll('.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.dc-cell.over').forEach(el=>el.classList.remove('over'));
+  dragId=null;dragSrc=null;dragCi=null;
+}
+function cOv(e,i){
+  e.preventDefault();e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.dc-cell.over').forEach(el=>el.classList.remove('over'));
+  const el=document.querySelector('.dc-cell[data-ci="'+i+'"]');if(el)el.classList.add('over');
+}
+function cLv(e){if(!e.currentTarget.contains(e.relatedTarget))e.currentTarget.classList.remove('over');}
+function cDr(e,i){
+  e.preventDefault();if(!dragId)return;
+  const upg=UPG.find(u=>u.id===dragId);if(!upg)return;
+  const ng=[...grid];
+  if(dragSrc==='cell'&&dragCi!=null){const tmp=ng[i];ng[i]=ng[dragCi];ng[dragCi]=tmp;}
+  else ng[i]=upg;
+  grid=ng;dEnd();render();
+}
+function rmC(e,i){e.stopPropagation();e.preventDefault();grid[i]=null;render();}
+function tOv(e){e.preventDefault();document.getElementById('trash').classList.add('over');}
+function tLv(){document.getElementById('trash').classList.remove('over');}
+function tDr(e){
+  e.preventDefault();
+  if(dragSrc==='cell'&&dragCi!=null)grid[dragCi]=null;
+  document.getElementById('trash').classList.remove('over');
+  dEnd();render();
+}
+
+/* ═══════════════ MAIN RENDER ═══════════════ */
+function render(){
+  rPool();rGrid();rMetrics();rStepBar();rRoadmap();
+  const active=document.querySelector('.tab-btn.on');
+  if(active){
+    const id=active.onclick.toString().match(/'(\w+)'/)?.[1];
+    if(id==='financials')rFinancials();
+    else if(id==='benchmarks')rBenchmarks();
+    else if(id==='bizcase')rBizCase();
+  }
+}
+
+render();
+rStepBar();
+rFinancials();
+rBenchmarks();
+rBizCase();
+</script>
+</body>
+</html>
