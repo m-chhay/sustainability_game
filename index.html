@@ -37,7 +37,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .btn-ghost:hover{color:var(--text2)}
 
 /* ── TOOLTIP ── */
-#tip{position:fixed;background:var(--text);color:#f0ede6;padding:9px 13px;border-radius:9px;font-size:11.5px;max-width:240px;line-height:1.55;z-index:400;pointer-events:none;opacity:0;transition:opacity .15s;font-family:'DM Sans',sans-serif}
+#tip{position:fixed;background:#202028;color:#eceadf;padding:9px 13px;border-radius:9px;font-size:11.5px;max-width:240px;line-height:1.55;z-index:400;pointer-events:none;opacity:0;transition:opacity .15s;font-family:'DM Sans',sans-serif}
 #tip.show{opacity:1}
 .tip-i{width:14px;height:14px;border-radius:50%;background:var(--border2);color:var(--text3);font-size:8.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:help;flex-shrink:0;vertical-align:middle;margin-left:3px;transition:background .15s}
 .tip-i:hover{background:var(--border2);color:var(--text2)}
@@ -54,16 +54,24 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .tour-btn{padding:7px 14px;border:0.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;color:var(--text2);transition:all .15s}
 .tour-btn:hover{border-color:var(--border2);background:var(--surface2)}
 
-/* ── STEP PROGRESS ── */
-.step-bar{background:var(--surface);border:0.5px solid var(--border);border-radius:11px;padding:13px 22px;margin-bottom:18px;display:flex;align-items:center;gap:0}
-.step-item{display:flex;align-items:center;gap:9px;flex:1}
-.step-num{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text3);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
-.step-num.active{background:var(--green-l);border-color:var(--green-m);color:var(--green)}
-.step-num.done{background:var(--green-m);border-color:var(--green-m);color:#fff}
-.step-label{font-size:11.5px;color:var(--text3);transition:color .3s}
-.step-label.active{color:var(--green);font-weight:500}
-.step-label.done{color:var(--green-m)}
-.step-sep{width:32px;height:1px;background:var(--border);margin:0 8px;flex-shrink:0}
+/* step-bar removed */
+
+/* ── COST / ROI SUMMARY PANEL ── */
+.fin-summary{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:0;overflow:hidden;margin-bottom:8px}
+.fin-summary-hd{padding:10px 13px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.fin-summary-hd:hover{background:var(--surface2)}
+.fin-summary-body{padding:10px 13px}
+.fin-row{display:flex;align-items:baseline;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.fin-row:last-child{border-bottom:none;padding-bottom:0}
+.fin-row-label{font-size:10px;color:var(--text3)}
+.fin-row-val{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.fin-divider{height:0.5px;background:var(--border);margin:4px 0}
+.roi-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;margin-top:8px;width:100%;justify-content:center}
+/* ── EXPAND GRID BUTTON ── */
+.expand-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 0;border:1.5px dashed var(--border2);border-radius:var(--radius);background:transparent;font-family:inherit;font-size:16px;color:var(--text3);cursor:pointer;transition:all .15s}
+.expand-btn:hover{border-color:var(--green-m);color:var(--green);background:var(--green-l)}
+.expand-btn:disabled,.expand-btn.maxed{border-color:var(--border);color:var(--border2);cursor:not-allowed;opacity:.45;pointer-events:none}
+
 
 /* ── SIZE BUTTONS ── */
 .sz-group{display:flex;gap:4px}
@@ -73,21 +81,23 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .sz-sub{font-size:9px;opacity:.7;display:block}
 
 /* ── 3-COLUMN MAIN ── */
-.main-grid{display:grid;grid-template-columns:262px 1fr 242px;gap:16px;align-items:start}
+.main-grid{display:grid;grid-template-columns:256px 1fr 232px;gap:16px;align-items:start}
 
 /* ── POOL ── */
 .section-label{font-size:10px;letter-spacing:.06em;color:var(--text3);font-weight:500}
 .pool-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;cursor:grab;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;user-select:none;transition:all .15s;position:relative}
 .pool-card:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,.06);transform:translateY(-1px)}
+.drag-handle{font-size:12px;color:var(--border2);flex-shrink:0;cursor:grab;user-select:none;letter-spacing:-1px;line-height:1;padding-top:2px;transition:color .15s}
+.pool-card:hover .drag-handle{color:var(--text3)}
 .pool-card.dragging{opacity:.2;transform:scale(.97)}
 .badge{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;font-weight:500;flex-shrink:0;pointer-events:none;letter-spacing:.05em}
 .pool-name{font-size:12px;font-weight:600;margin-bottom:1px;color:var(--text)}
 .pool-meta{font-size:10px;color:var(--text3);margin-bottom:5px}
 .pool-tags{display:flex;gap:3px;flex-wrap:wrap;align-items:center}
-.ctag{font-size:8px;padding:2px 5px;border-radius:3px;white-space:nowrap;line-height:1.8;font-weight:500}
-.cplx{font-size:8px;padding:2px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
-.cL{background:#e8f4e1;color:#2d6a1f}.cM{background:#fef3dc;color:#8a5a00}.cH{background:#fdeaea;color:#9a2020}
-.s3{background:#ede8ff;color:#5c3daa;font-size:8px;padding:2px 5px;border-radius:3px;font-weight:500;white-space:nowrap}
+.ctag{font-size:10px;padding:2px 6px;border-radius:3px;white-space:nowrap;line-height:1.8;font-weight:500}
+.cplx{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;white-space:nowrap}
+.cL{background:#e0f5ef;color:#0a5040}.cM{background:#e6f0fa;color:#0f4a8a}.cH{background:#ede8ff;color:#4a2d9a}
+.s3{background:#ede8ff;color:#5c3daa;font-size:10px;padding:2px 6px;border-radius:3px;font-weight:500;white-space:nowrap}
 .trash-drop{border:1px dashed var(--border2);border-radius:9px;padding:10px;text-align:center;margin-top:8px;color:var(--text3);font-size:11px;transition:all .15s}
 .trash-drop.over{border-color:#E24B4A;background:#fdeaea;color:#9a2020}
 
@@ -210,14 +220,41 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .cp-btn{padding:5px 11px;border:0.5px solid var(--border);border-radius:7px;background:var(--surface);font-family:inherit;font-size:11px;cursor:pointer;color:var(--text2);transition:all .15s}
 .cp-btn.on{background:var(--green-l);border-color:var(--green-m);color:var(--green);font-weight:500}
 
-@media(prefers-color-scheme:dark){
-  :root{--bg:#111109;--surface:#1a1a16;--surface2:#222220;--border:#333330;--border2:#444440;--text:#f0ede6;--text2:#b0ada6;--text3:#706d65;--green:#7ec860;--green-l:#1a2e14;--green-m:#5a9a35;--green-d:#3d6a22;--amber:#c89030;--amber-l:#2a2000;--red:#c85050;--red-l:#250a0a;--blue:#5090d0;--blue-l:#0a1a2a}
-  .ob-card,.src-tag,.ctag,.cplx,.s3,.bench-you-label{filter:brightness(.9)}
-  .ob-hint{background:var(--surface2)}
-  .pool-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.3)}
-  .seg{color:rgba(255,255,255,.7)}
-  .assum{background:#1a1600;border-color:#5a4200;color:#c0a040}
-}
+/* Dark mode — manual toggle (body.dark) OR system preference (unless body.light) */
+body.dark,body:not(.light){transition:background .2s,color .2s}
+@media(prefers-color-scheme:dark){body:not(.light){--bg:#1c1c1f;--surface:#27272b;--surface2:#303036;--border:#3e3e46;--border2:#56565f;--text:#eceadf;--text2:#b8b4a8;--text3:#858280;--green:#6abe4a;--green-l:#1e3318;--green-m:#52932a;--green-d:#3a6a20;--amber:#d4a030;--amber-l:#2e2200;--red:#d46060;--red-l:#2e1010;--blue:#6098d8;--blue-l:#162040}body:not(.light) .ob-hint{background:var(--surface2)}body:not(.light) .pool-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.3)}body:not(.light) .seg{color:rgba(255,255,255,.7)}body:not(.light) .assum{background:#2a2400;border-color:#6a5200;color:#d4b050}}
+body.dark{--bg:#1c1c1f;--surface:#27272b;--surface2:#303036;--border:#3e3e46;--border2:#56565f;--text:#eceadf;--text2:#b8b4a8;--text3:#858280;--green:#6abe4a;--green-l:#1e3318;--green-m:#52932a;--green-d:#3a6a20;--amber:#d4a030;--amber-l:#2e2200;--red:#d46060;--red-l:#2e1010;--blue:#6098d8;--blue-l:#162040}
+body.dark .ob-hint{background:var(--surface2)}
+body.dark .pool-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+body.dark .seg{color:rgba(255,255,255,.7)}
+body.dark .assum{background:#2a2400;border-color:#6a5200;color:#d4b050}
+/* mode toggle */
+.mode-btn{padding:7px 11px;border:0.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:inherit;font-size:14px;cursor:pointer;line-height:1;transition:all .15s}
+.mode-btn:hover{border-color:var(--border2);background:var(--surface2)}
+/* reset button */
+.reset-btn{padding:7px 14px;border:0.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;color:var(--red);transition:all .15s;font-weight:500}
+.reset-btn:hover{border-color:var(--red);background:var(--red-l)}
+/* sort controls */
+.sort-bar{display:flex;align-items:center;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.sort-lbl{font-size:10px;color:var(--text3);margin-right:2px}
+.sort-btn{padding:4px 9px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);font-family:inherit;font-size:10px;cursor:pointer;color:var(--text3);transition:all .12s;white-space:nowrap}
+.sort-btn:hover{border-color:var(--border2);color:var(--text2)}
+.sort-btn.on{background:var(--surface2);border-color:var(--border2);color:var(--text);font-weight:500}
+
+/* ── INLINE CONFIRM ── */
+#shrink-confirm{display:none;background:var(--red-l);border:1px solid var(--red);border-radius:var(--radius);padding:9px 13px;margin-top:6px;font-size:11.5px;color:var(--red)}
+body.dark #shrink-confirm{background:#2e1010;border-color:#d46060;color:#d46060}
+@media(prefers-color-scheme:dark){body:not(.light) #shrink-confirm{background:#2e1010;border-color:#d46060;color:#d46060}}
+#shrink-confirm.show{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.confirm-yes{padding:4px 12px;background:var(--red);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:11px;font-weight:500;cursor:pointer}
+.confirm-no{padding:4px 10px;background:transparent;color:var(--text3);border:0.5px solid var(--border2);border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer}
+.confirm-no:hover{color:var(--text2)}
+
+body.dark .cL{background:#1a3028!important;color:#7ecfa8!important}
+body.dark .cM{background:#162038!important;color:#7ab0e8!important}
+body.dark .cH{background:#201838!important;color:#a898e8!important}
+body.dark .s3{background:#201830!important;color:#c0a0e8!important}
+@media(prefers-color-scheme:dark){body:not(.light) .cL{background:#1a3028!important;color:#7ecfa8!important}body:not(.light) .cM{background:#162038!important;color:#7ab0e8!important}body:not(.light) .cH{background:#201838!important;color:#a898e8!important}body:not(.light) .s3{background:#201830!important;color:#c0a0e8!important}}
 </style>
 </head>
 <body>
@@ -241,8 +278,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="ob-step" data-s="2">
       <span class="ob-emoji">🖱️</span>
       <h2 class="ob-title">Step 2 — Drag upgrades into your data center</h2>
-      <p class="ob-body">The left panel lists 8 sustainability initiatives. Drag any of them into the 8-slot grid. You can place multiple of the same upgrade, rearrange slots, or remove any card with the × button.</p>
-      <div class="ob-hint">Each card shows: CO₂ impact · upfront cost · implementation complexity · phase timing · which compliance frameworks it supports · whether it reduces Scope 3.</div>
+      <p class="ob-body">The upgrade panel is on the left. Each card has a ⠿ drag handle — grab it and drag right into any open slot in the grid. You can place multiple of the same upgrade or rearrange slots.</p>
+      <div class="ob-hint">Each card shows: CO₂ impact · upfront cost · implementation complexity · phase timing · compliance frameworks · and whether it reduces Scope 3 emissions.</div>
     </div>
     <div class="ob-step" data-s="3">
       <span class="ob-emoji">📊</span>
@@ -277,6 +314,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <span class="hdr-name">DATA CENTER SUSTAINABILITY OPTIMIZER</span>
   </div>
   <div class="hdr-right">
+    <button class="mode-btn" id="mode-btn" onclick="toggleMode()" title="Toggle light / dark mode">🌙</button>
+    <button class="reset-btn" onclick="resetAll()" title="Clear all upgrades and reset to defaults">↺ Reset</button>
     <button class="tour-btn" onclick="startTour()">❓ How to use</button>
     <span style="font-size:11px;color:var(--border2)">|</span>
     <span style="font-size:11.5px;color:var(--text3)">Facility size:</span>
@@ -284,52 +323,91 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
-<!-- STEP PROGRESS BAR -->
-<div class="step-bar" id="step-bar"></div>
 
 <!-- MAIN 3-COL -->
 <div class="main-grid">
 
-  <!-- LEFT: POOL -->
-  <div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+  <!-- LEFT: AVAILABLE UPGRADES (scrollable) -->
+  <div style="display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <span class="section-label">AVAILABLE UPGRADES</span>
       <span style="font-size:10px;color:var(--text3)">drag to grid →</span>
     </div>
-    <div id="pool"></div>
-    <div id="trash" class="trash-drop" ondragover="tOv(event)" ondragleave="tLv()" ondrop="tDr(event)">× drag here to remove an upgrade</div>
+    <div class="sort-bar" id="sort-bar"></div>
+    <div id="pool" style="overflow-y:auto;max-height:560px;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent"></div>
   </div>
 
-  <!-- CENTER: GRID + METERS -->
+  <!-- CENTER: GRID + METERS STRIP + PROGRESS -->
   <div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <span style="font-size:15px;font-weight:600">Your Data Center</span>
-      <span style="font-size:10px;color:var(--text3)">8 slots · click × on a card to remove</span>
+      <span style="font-size:10px;color:var(--text3)" id="grid-hint">8 slots · hover a placed card to remove</span>
     </div>
     <div style="background:var(--surface2);padding:12px;border-radius:var(--radius-lg)">
       <div id="dc-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
     </div>
-    <!-- PUE + WUE -->
+    <!-- METERS as compact strip below grid -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
       <div class="meter-card">
-        <div style="display:flex;align-items:center;font-size:10px;color:var(--text3);margin-bottom:3px">PUE<span class="tip-i" onmouseenter="st(event,'Power Usage Effectiveness — ratio of total facility energy to IT load. Lower is better. 1.0 = perfect; 1.58 = 2023 global average (Uptime Institute).')" onmouseleave="ht()">?</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;font-size:10px;color:var(--text3)">PUE<span class="tip-i" onmouseenter="st(event,'Power Usage Effectiveness — ratio of total facility energy to IT load. Lower is better. 1.0 = perfect; 1.58 = 2023 global average (Uptime Institute). Bar fills green as you improve.')" onmouseleave="ht()">?</span></div>
+          <div style="font-size:9px;color:var(--text3)">lower = better</div>
+        </div>
         <div class="meter-val" id="pue-v">1.58</div>
-        <div class="meter-track"><div class="meter-fill" id="pue-f" style="width:100%;background:#E24B4A"></div></div>
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">Avg 1.58 · Best-in-class 1.04</div>
+        <div class="meter-track"><div class="meter-fill" id="pue-f" style="width:5%;background:#E24B4A"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:3px"><span>1.04 best</span><span>1.58 avg</span></div>
       </div>
       <div class="meter-card">
-        <div style="display:flex;align-items:center;font-size:10px;color:var(--text3);margin-bottom:3px">WUE<span class="tip-i" onmouseenter="st(event,'Water Usage Effectiveness — liters of water used per kWh of IT load. Lower is better. Industry avg = 1.80 L/kWh.')" onmouseleave="ht()">?</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;font-size:10px;color:var(--text3)">WUE<span class="tip-i" onmouseenter="st(event,'Water Usage Effectiveness — liters of water per kWh of IT load. Lower is better. Industry avg = 1.80 L/kWh. Bar fills green as you improve.')" onmouseleave="ht()">?</span></div>
+          <div style="font-size:9px;color:var(--text3)">lower = better</div>
+        </div>
         <div class="meter-val" id="wue-v">1.80</div>
-        <div class="meter-track"><div class="meter-fill" id="wue-f" style="width:100%;background:#E24B4A"></div></div>
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">Avg 1.80 · Best-in-class 0.50 L/kWh</div>
+        <div class="meter-track"><div class="meter-fill" id="wue-f" style="width:5%;background:#E24B4A"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:3px"><span>0.50 best</span><span>1.80 avg</span></div>
       </div>
     </div>
     <div class="prog-label"><span>Sustainability potential unlocked</span><span id="pct">0%</span></div>
     <div class="prog-track"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
+    <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+      <button class="expand-btn" id="shrink-btn" onclick="shrinkGrid()" style="flex:0 0 auto;width:38px;padding:9px 0;font-size:16px" title="Remove 4 slots (min 8)">−</button>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 12px;border:1.5px dashed var(--border2);border-radius:var(--radius);" id="slots-badge">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)">
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text)" id="slots-count">8</span>
+          <span>slots</span>
+          <span style="color:var(--border2)">·</span>
+          <span>min 8 · max 24</span>
+        </div>
+        <div style="font-size:10px" id="slot-cost-lbl">$250k per 4-slot pack</div>
+      </div>
+      <button class="expand-btn" id="expand-btn" onclick="expandGrid()" style="flex:0 0 auto;width:38px;padding:9px 0;font-size:16px" title="Add 4 slots (max 24)">＋</button>
+    </div>
+    <div id="shrink-confirm">
+      <span id="shrink-msg">Remove 4 slots?</span>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="confirm-no" onclick="cancelShrink()">Cancel</button>
+        <button class="confirm-yes" onclick="confirmShrink()">Remove</button>
+      </div>
+    </div>
   </div>
 
-  <!-- RIGHT: ENV + COMPLIANCE -->
+  <!-- RIGHT: COST/ROI + ENV + COMPLIANCE -->
   <div>
+    <!-- COST & ROI PANEL -->
+    <div class="fin-summary" id="fin-summary-panel">
+      <div class="fin-summary-hd" onclick="toggleFinSummary()">
+        <span style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.04em">TOTAL SPEND &amp; ROI</span>
+        <span style="font-size:10px;color:var(--text3)" id="fin-summary-arrow">▼</span>
+      </div>
+      <div class="fin-summary-body" id="fin-summary-body">
+        <div class="fin-row"><span class="fin-row-label">Total CapEx</span><span class="fin-row-val" id="rs-capex">—</span></div>
+        <div class="fin-row"><span class="fin-row-label">Annual savings</span><span class="fin-row-val" style="color:var(--green)" id="rs-annual">—</span></div>
+        <div class="fin-row"><span class="fin-row-label">Break-even</span><span class="fin-row-val" id="rs-be">—</span></div>
+        <div class="fin-row"><span class="fin-row-label">5-year net</span><span class="fin-row-val" id="rs-5yr">—</span></div>
+        <div class="fin-row"><span class="fin-row-label">10-year net</span><span class="fin-row-val" id="rs-10yr">—</span></div>
+        <div id="rs-roi-pill"></div>
+      </div>
+    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <span class="section-label">ANNUAL ENVIRONMENTAL IMPACT</span>
     </div>
@@ -363,19 +441,19 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 <!-- TABS -->
 <div class="tabs-section">
   <div class="tab-bar">
-    <button class="tab-btn on" onclick="showTab('roadmap',this)">🗺 Roadmap</button>
-    <button class="tab-btn" onclick="showTab('financials',this)">💰 Financials</button>
+    <button class="tab-btn" onclick="showTab('roadmap',this)">🗺 Roadmap</button>
+    <button class="tab-btn on" onclick="showTab('financials',this)">💰 Financials</button>
     <button class="tab-btn" onclick="showTab('benchmarks',this)">📊 Peer Benchmarks</button>
     <button class="tab-btn" onclick="showTab('bizcase',this)">📋 Business Case</button>
   </div>
 
   <!-- ROADMAP -->
-  <div class="tab-panel on" id="tab-roadmap">
+  <div class="tab-panel" id="tab-roadmap">
     <div id="roadmap-content"></div>
   </div>
 
   <!-- FINANCIALS -->
-  <div class="tab-panel" id="tab-financials">
+  <div class="tab-panel on" id="tab-financials">
     <div id="fin-content"></div>
   </div>
 
@@ -432,6 +510,12 @@ const TC={
   'ISO 50001':['#e0f5ef','#0f5a45'],'RE100':['#e8f4e1','#2d6a1f'],'SEC Climate':['#fef3dc','#8a5a00'],
   'Grid Resilience':['#fef3dc','#7a4a00'],'Circular Economy':['#fdeaea','#9a2020'],
 };
+const TC_DARK={
+  'Scope 2':['#102040','#7ab0e8'],'Scope 3':['#1e1438','#b898e8'],'CSRD':['#1e1438','#b898e8'],
+  'ISO 50001':['#102a20','#7ecfa8'],'RE100':['#122010','#80c860'],'SEC Climate':['#281800','#d4a840'],
+  'Grid Resilience':['#281800','#c89030'],'Circular Economy':['#280808','#e07070'],
+};
+function isDark(){return document.body.classList.contains('dark')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches&&!document.body.classList.contains('light'));}
 const UPG=[
   {id:'solar',  name:'Solar Array',          abbr:'SOL',co2:450,bg:'#F5B84A',tc:'#3d2600',capex:3500000,sav:700000,pue:0,   wue:0,    phase:3,cplx:'H',time:'24–36 months',scope3:false,
    tags:['Scope 2','RE100','CSRD','SEC Climate'],why:'Eliminates purchased electricity carbon (Scope 2). Solar PPAs can reduce CapEx to $0.',cnote:'Requires site survey, utility interconnection, permitting, and 2–3 year construction.'},
@@ -451,7 +535,8 @@ const UPG=[
    tags:['CSRD','Circular Economy'],why:'Captures waste heat from liquid-cooled racks for building heating, reducing district energy consumption.',cnote:'Requires heat demand on-site or nearby. Most effective in cold climates with nearby buildings to supply.'},
 ];
 const BASE_PUE=1.58,BASE_WUE=1.80,MIN_PUE=1.04,MIN_WUE=0.50;
-const MAX_CO2=450*8;
+const MAX_CO2_PER_SLOT=450; // recalculated in rMetrics
+const SLOT_COST_BASE=250000; // $250k per slot at 5MW baseline, scales with S.fm
 const PEERS_PUE=[
   {name:'Google',val:1.10,color:'#4285F4'},{name:'Microsoft',val:1.18,color:'#00A4EF'},
   {name:'Apple',val:1.20,color:'#555'},{name:'AWS',val:1.22,color:'#FF9900'},
@@ -469,7 +554,10 @@ const PHASE_META=[
 ];
 
 /* ═══════════════ STATE ═══════════════ */
-let grid=new Array(8).fill(null),sIdx=1,cpIdx=0,energyRate=0.08;
+let gridSlots=8;
+let slotExpansionCost=0; // cumulative CapEx paid for extra slots
+let grid=new Array(gridSlots).fill(null),sIdx=1,cpIdx=0,energyRate=0.08;
+let finSummaryOpen=true;
 let dragId=null,dragSrc=null,dragCi=null;
 const cur={co2:0,trees:0,cars:0,flights:0};
 let obStep=0;
@@ -482,17 +570,23 @@ document.getElementById('sz-btns').innerHTML=SIZES.map((s,i)=>
 // Step bar
 function rStepBar(){
   const placed=grid.filter(Boolean).length;
+  const activeTab=document.querySelector('.tab-btn.on')?.textContent||'';
+  const onFin=activeTab.includes('Financials');
+  const onBiz=activeTab.includes('Business');
   const steps=[
-    {n:1,label:'Choose facility size',done:true,active:placed===0},
-    {n:2,label:'Add sustainability upgrades',done:placed>0,active:placed>0&&placed<4},
-    {n:3,label:'Explore your impact',done:placed>=4,active:placed>=4},
-    {n:4,label:'Export business case',done:false,active:false},
+    {n:1,label:'Choose your facility size above',done:true,active:placed===0,hint:''},
+    {n:2,label:'Drag upgrades into the grid',done:placed>0,active:placed>0&&placed<3,hint:placed===0?'→ start with the left panel':''},
+    {n:3,label:'Open Financials tab',done:onFin||onBiz,active:placed>=3&&!onFin&&!onBiz,hint:placed>=3&&!onFin?'← click the tab below':''},
+    {n:4,label:'Copy your business case',done:onBiz,active:onFin,hint:onFin?'→ switch to Business Case tab':''},
   ];
   document.getElementById('step-bar').innerHTML=steps.map((s,i)=>`
     ${i>0?'<div class="step-sep"></div>':''}
     <div class="step-item">
       <div class="step-num ${s.done?'done':s.active?'active':''}">${s.done?'✓':s.n}</div>
-      <span class="step-label ${s.done?'done':s.active?'active':''}">${s.label}</span>
+      <div>
+        <span class="step-label ${s.done?'done':s.active?'active':''}">${s.label}</span>
+        ${s.hint&&s.active?`<span style="display:block;font-size:9.5px;color:var(--green-m);font-weight:500">${s.hint}</span>`:''}
+      </div>
     </div>`).join('');
 }
 
@@ -524,7 +618,8 @@ function ht(){tipEl.classList.remove('show');}
 
 /* ═══════════════ TAGS ═══════════════ */
 function tagPills(tags){
-  return tags.map(t=>{const[bg,fc]=TC[t]||['#eee','#555'];return`<span class="ctag" style="background:${bg};color:${fc}">${t}</span>`;}).join('');
+  const dark=isDark();
+  return tags.map(t=>{const[bg,fc]=(dark?TC_DARK[t]:null)||TC[t]||['#333','#ccc'];return`<span class="ctag" style="background:${bg};color:${fc}">${t}</span>`;}).join('');
 }
 function fmt(n){
   const a=Math.abs(n),s=n<0?'-':'';
@@ -540,31 +635,34 @@ function animV(id,target,key){
 }
 
 /* ═══════════════ SETTERS ═══════════════ */
-function setSz(i){sIdx=i;document.querySelectorAll('.sz-btn').forEach((b,j)=>b.classList.toggle('on',j===i));render();}
+function setSz(i){sIdx=i;document.querySelectorAll('.sz-btn').forEach((b,j)=>b.classList.toggle('on',j===i));updateSlotButtons();render();}
 function setCP(i){cpIdx=i;document.querySelectorAll('.cp-btn').forEach((b,j)=>b.classList.toggle('on',j===i));rFinancials();}
 
 /* ═══════════════ RENDER: POOL ═══════════════ */
 function rPool(){
-  document.getElementById('pool').innerHTML=UPG.map(u=>`
+  document.getElementById('pool').innerHTML=sortedUPG().map(u=>`
     <div class="pool-card" id="pc-${u.id}" draggable="true"
       ondragstart="dPS(event,'${u.id}')" ondragend="dEnd()"
-      onmouseenter="st(event,'${u.why} ${u.cnote}')" onmouseleave="ht()">
+      onmouseenter="st(event,'${u.why} — ${u.cnote} Compliance: ${u.tags.join(', ')}.')" onmouseleave="ht()">
+      <span class="drag-handle">⠿</span>
       <div class="badge" style="background:${u.bg};color:${u.tc}">${u.abbr}</div>
       <div style="flex:1;min-width:0">
         <div class="pool-name">${u.name}</div>
         <div class="pool-meta">${u.co2}t CO₂/yr · ${fmt(u.capex)} capex</div>
         <div class="pool-tags">
-          <span class="cplx c${u.cplx}" title="${u.time}">${u.cplx==='L'?'Low':u.cplx==='M'?'Medium':'High'} complexity</span>
-          <span class="ctag" style="background:#f0ede6;color:var(--text3);font-size:8px">Ph.${u.phase}</span>
-          ${u.scope3?'<span class="s3">Scope 3</span>':''}
-          ${tagPills(u.tags.slice(0,2))}
+          <span class="cplx c${u.cplx}" title="${u.time}">${u.cplx==='L'?'Low effort':u.cplx==='M'?'Medium effort':'High effort'}</span>
+          <span style="font-size:10px;color:var(--text3)">Phase ${u.phase}</span>
+          ${u.scope3?'<span class="s3">Scope 3 ✓</span>':''}
         </div>
       </div>
-    </div>`).join('');
+    </div>`).join('');;
 }
 
 /* ═══════════════ RENDER: GRID ═══════════════ */
 function rGrid(){
+  const cols=gridSlots>12?6:4;
+  document.getElementById('dc-grid').style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  const hint=document.getElementById('grid-hint');if(hint)hint.textContent=gridSlots+' slots · hover a placed card to remove';
   document.getElementById('dc-grid').innerHTML=grid.map((u,i)=>{
     if(u)return`<div class="dc-cell has-item" data-ci="${i}" style="border-color:${u.bg}66"
       ondragover="cOv(event,${i})" ondragleave="cLv(event)" ondrop="cDr(event,${i})">
@@ -592,7 +690,7 @@ function rMetrics(){
   animV('v-trees',Math.round(co2*16.5),'trees');
   animV('v-cars',Math.round(co2/4.29),'cars');
   animV('v-flights',Math.round(co2/1.1),'flights');
-  const pct=Math.min(100,Math.round(rawCO2/MAX_CO2*100));
+  const pct=Math.min(100,Math.round(rawCO2/(MAX_CO2_PER_SLOT*gridSlots)*100));
   document.getElementById('pct').textContent=pct+'%';
   document.getElementById('prog-bar').style.width=pct+'%';
   // PUE
@@ -601,7 +699,8 @@ function rMetrics(){
   const pueEl=document.getElementById('pue-v');
   pueEl.textContent=pue.toFixed(2);
   pueEl.style.color=pue<1.2?'var(--green)':pue<1.4?'#b08020':'var(--red)';
-  const puePct=Math.max(5,(1-(pue-MIN_PUE)/(BASE_PUE-MIN_PUE))*100);
+  // Inverted: full bar = best-in-class (green), empty = baseline (red)
+  const puePct=Math.max(5,Math.min(100,(1-(pue-MIN_PUE)/(BASE_PUE-MIN_PUE))*100));
   document.getElementById('pue-f').style.width=puePct+'%';
   document.getElementById('pue-f').style.background=pue<1.2?'var(--green-m)':pue<1.4?'#c8a020':'#E24B4A';
   // WUE
@@ -610,7 +709,7 @@ function rMetrics(){
   const wueEl=document.getElementById('wue-v');
   wueEl.textContent=wue.toFixed(2);
   wueEl.style.color=wue<1.0?'var(--green)':wue<1.4?'#b08020':'var(--red)';
-  const wuePct=Math.max(5,(1-(wue-MIN_WUE)/(BASE_WUE-MIN_WUE))*100);
+  const wuePct=Math.max(5,Math.min(100,(1-(wue-MIN_WUE)/(BASE_WUE-MIN_WUE))*100));
   document.getElementById('wue-f').style.width=wuePct+'%';
   document.getElementById('wue-f').style.background=wue<1.0?'var(--green-m)':wue<1.4?'#c8a020':'#E24B4A';
   // Compliance
@@ -673,7 +772,8 @@ function rFinancials(){
     </div>`;return;
   }
   const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
-  const capex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
+  const upgradeCapex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
+  const capex=upgradeCapex+slotExpansionCost; // includes slot infrastructure spend
   const carbonVal=rawCO2*S.cm*CPS[cpIdx].v;
   const annual=placed.reduce((s,u)=>s+u.sav,0)*S.sm + carbonVal;
   const yr5=annual*5-capex, yr10=annual*10-capex;
@@ -731,7 +831,7 @@ function rFinancials(){
     <div class="seg-labels"><span>Year 1</span><span>Year 3</span><span>Year 5</span><span>Year 7</span><span>Year 10</span></div>
   </div>
   <div class="assum">
-    <strong>Key assumptions:</strong> Constant energy price of $${energyRate.toFixed(2)}/kWh · Carbon price $${CPS[cpIdx].v}/t · No maintenance costs or equipment degradation included · IRA tax credits, utility rebates, and solar PPAs not modeled but can materially reduce CapEx and improve ROI. Consult a certified energy auditor for facility-specific projections.
+    <strong>Key assumptions:</strong> Constant energy price of $${energyRate.toFixed(2)}/kWh · Carbon price $${CPS[cpIdx].v}/t · No maintenance costs or equipment degradation included · IRA tax credits, utility rebates, and solar PPAs not modeled.${slotExpansionCost>0?` Slot infrastructure: ${fmt(slotExpansionCost)} included in CapEx ($${Math.round(SLOT_COST_BASE*S.fm/1000)}k/slot at this facility size).`:''} Consult a certified energy auditor for facility-specific projections.
   </div>`;
   document.getElementById('fin-content').innerHTML=html;
 }
@@ -923,6 +1023,7 @@ function showTab(id,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('tab-'+id).classList.add('on');
+  if(id==='roadmap')rRoadmap();
   if(id==='financials')rFinancials();
   if(id==='benchmarks')rBenchmarks();
   if(id==='bizcase')rBizCase();
@@ -967,9 +1068,190 @@ function tDr(e){
   dEnd();render();
 }
 
+
+/* ═══════════════ DARK MODE TOGGLE ═══════════════ */
+let darkForced = null; // null=auto, true=dark, false=light
+function isDark(){
+  if(darkForced!==null) return darkForced;
+  return window.matchMedia('(prefers-color-scheme:dark)').matches;
+}
+function applyMode(){
+  const d=isDark();
+  document.body.classList.toggle('dark', d);
+  document.body.classList.toggle('light', !d && darkForced===false);
+  const btn=document.getElementById('mode-btn');
+  if(btn) btn.textContent = d ? '☀️' : '🌙';
+  if(btn) btn.title = d ? 'Switch to light mode' : 'Switch to dark mode';
+}
+function toggleMode(){
+  if(darkForced===null) darkForced=!isDark();
+  else darkForced=!darkForced;
+  applyMode();
+}
+applyMode();
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(darkForced===null)applyMode();});
+
+/* ═══════════════ RESET ═══════════════ */
+function resetAll(){
+  if(!grid.filter(Boolean).length && sIdx===1 && cpIdx===0) return;
+  gridSlots=8; slotExpansionCost=0; grid=new Array(8).fill(null);
+  sIdx=1; cpIdx=0; energyRate=0.08; sortKey='default';
+  updateSlotButtons();
+  document.querySelectorAll('.sz-btn').forEach((b,i)=>b.classList.toggle('on',i===1));
+  render();
+  // reset financials tab cp buttons if visible
+  const cpg=document.getElementById('cp-btns');
+  if(cpg) cpg.querySelectorAll('.cp-btn').forEach((b,i)=>b.classList.toggle('on',i===0));
+}
+
+/* ═══════════════ SORT ═══════════════ */
+let sortKey='default';
+const SORTS=[
+  {k:'default',  l:'Default'},
+  {k:'co2',      l:'CO₂ savings ↓'},
+  {k:'capex',    l:'Cost: low → high'},
+  {k:'capex_d',  l:'Cost: high → low'},
+  {k:'roi',      l:'Best ROI'},
+  {k:'pue',      l:'PUE impact'},
+  {k:'phase',    l:'Quick wins first'},
+  {k:'scope3',   l:'Scope 3'},
+];
+function sortedUPG(){
+  const S=SIZES[sIdx];
+  const arr=[...UPG];
+  if(sortKey==='default') return arr;
+  if(sortKey==='co2') return arr.sort((a,b)=>b.co2-a.co2);
+  if(sortKey==='capex') return arr.sort((a,b)=>a.capex-b.capex);
+  if(sortKey==='capex_d') return arr.sort((a,b)=>b.capex-a.capex);
+  if(sortKey==='roi') return arr.sort((a,b)=>{
+    const ra=a.capex>0?a.sav/a.capex:0, rb=b.capex>0?b.sav/b.capex:0;
+    return rb-ra;
+  });
+  if(sortKey==='pue') return arr.sort((a,b)=>a.pue-b.pue); // most negative first
+  if(sortKey==='phase') return arr.sort((a,b)=>a.phase-b.phase);
+  if(sortKey==='scope3') return arr.sort((a,b)=>(b.scope3?1:0)-(a.scope3?1:0));
+  return arr;
+}
+function setSort(k){
+  sortKey=k;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('on',b.dataset.sk===k));
+  rPool();
+}
+function rSortBar(){
+  document.getElementById('sort-bar').innerHTML=
+    '<span class="sort-lbl">Sort:</span>'+
+    SORTS.map(s=>`<button class="sort-btn${s.k===sortKey?' on':''}" data-sk="${s.k}" onclick="setSort('${s.k}')">${s.l}</button>`).join('');
+}
+
+
+/* ═══════════════ EXPAND GRID ═══════════════ */
+function updateSlotButtons(){
+  const shrink=document.getElementById('shrink-btn');
+  const expand=document.getElementById('expand-btn');
+  const count=document.getElementById('slots-count');
+  const costLbl=document.getElementById('slot-cost-lbl');
+  const S=SIZES[sIdx];
+  const packCost=4*SLOT_COST_BASE*S.fm;
+  if(shrink) shrink.classList.toggle('maxed', gridSlots<=8);
+  if(expand) expand.classList.toggle('maxed', gridSlots>=24);
+  if(count)  count.textContent=gridSlots;
+  if(costLbl){
+    if(slotExpansionCost>0){
+      costLbl.textContent=fmt(packCost)+'/pack · '+fmt(slotExpansionCost)+' spent';
+      costLbl.style.color='var(--amber)';
+    } else {
+      costLbl.textContent=fmt(packCost)+' per 4-slot pack';
+      costLbl.style.color='';
+    }
+  }
+}
+function expandGrid(){
+  if(gridSlots>=24) return;
+  const S=SIZES[sIdx];
+  const packCost=4*SLOT_COST_BASE*S.fm;
+  gridSlots+=4;
+  slotExpansionCost+=packCost;
+  grid=grid.concat(new Array(4).fill(null));
+  updateSlotButtons();
+  render();
+}
+function shrinkGrid(){
+  if(gridSlots<=8) return;
+  const S=SIZES[sIdx];
+  const packCost=4*SLOT_COST_BASE*S.fm;
+  const newSize=gridSlots-4;
+  const toRemove=grid.slice(newSize);
+  const occupied=toRemove.filter(Boolean).length;
+  const box=document.getElementById('shrink-confirm');
+  const msg=document.getElementById('shrink-msg');
+  if(box&&msg){
+    let text='Remove 4 slots';
+    if(occupied>0) text+=` and discard ${occupied} upgrade${occupied>1?'s':''}`;
+    if(slotExpansionCost>=packCost) text+=` · refund ${fmt(packCost)}`;
+    text+='?';
+    msg.textContent=text;
+    box.classList.add('show');
+  }
+}
+function confirmShrink(){
+  const S=SIZES[sIdx];
+  const packCost=4*SLOT_COST_BASE*S.fm;
+  gridSlots=gridSlots-4;
+  slotExpansionCost=Math.max(0,slotExpansionCost-packCost);
+  grid=grid.slice(0,gridSlots);
+  cancelShrink();
+  updateSlotButtons();
+  render();
+}
+function cancelShrink(){
+  const box=document.getElementById('shrink-confirm');
+  if(box) box.classList.remove('show');
+}
+
+/* ═══════════════ FIN SUMMARY TOGGLE ═══════════════ */
+function toggleFinSummary(){
+  finSummaryOpen=!finSummaryOpen;
+  document.getElementById('fin-summary-body').style.display=finSummaryOpen?'block':'none';
+  document.getElementById('fin-summary-arrow').textContent=finSummaryOpen?'▼':'▶';
+}
+
+/* ═══════════════ RIGHT-RAIL FIN SUMMARY ═══════════════ */
+function rFinSummary(){
+  const S=SIZES[sIdx], placed=grid.filter(Boolean);
+  const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;else el.style.color='';}};
+  const pill=document.getElementById('rs-roi-pill');
+  if(!placed.length){
+    ['rs-capex','rs-annual','rs-be','rs-5yr','rs-10yr'].forEach(id=>set(id,'—'));
+    if(pill) pill.innerHTML='';
+    return;
+  }
+  const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
+  const upgradeCapex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
+  const capex=upgradeCapex+slotExpansionCost;
+  const carbonVal=rawCO2*S.cm*CPS[cpIdx].v;
+  const annual=placed.reduce((s,u)=>s+u.sav,0)*S.sm+carbonVal;
+  const yr5=annual*5-capex, yr10=annual*10-capex;
+  const be=annual>0?capex/annual:null;
+  const roiPct=capex>0?Math.round((annual/capex)*100):0;
+
+  set('rs-capex', fmt(capex));
+  set('rs-annual', fmt(annual)+'/yr', 'var(--green)');
+  set('rs-be', be?(be<1?'< 1 yr':be.toFixed(1)+' yrs'):'—');
+  set('rs-5yr', (yr5>=0?'+':'')+fmt(yr5), yr5>=0?'var(--green)':'var(--red)');
+  set('rs-10yr', (yr10>=0?'+':'')+fmt(yr10), yr10>=0?'var(--green)':'var(--red)');
+
+  // ROI pill
+  const roiColor=roiPct>=30?'#1a3d10':roiPct>=15?'#3B6D11':'#8a5a00';
+  const roiBg=roiPct>=30?'#c8e8b0':roiPct>=15?'var(--green-l)':'var(--amber-l)';
+  if(pill) pill.innerHTML=`<div class="roi-pill" style="background:${roiBg};color:${roiColor}">
+    <span style="font-size:16px;font-weight:600">${roiPct}%</span>
+    <span style="font-size:10px;font-weight:400">annual ROI on capital</span>
+  </div>`;
+}
+
 /* ═══════════════ MAIN RENDER ═══════════════ */
 function render(){
-  rPool();rGrid();rMetrics();rStepBar();rRoadmap();
+  rSortBar();rPool();rGrid();rMetrics();rFinSummary();
   const active=document.querySelector('.tab-btn.on');
   if(active){
     const id=active.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -980,10 +1262,12 @@ function render(){
 }
 
 render();
-rStepBar();
+updateSlotButtons();
 rFinancials();
 rBenchmarks();
 rBizCase();
+rRoadmap();
 </script>
+
 </body>
 </html>
