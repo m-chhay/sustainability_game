@@ -270,7 +270,7 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
   <div id="ob-inner">
     <div class="ob-step on" data-s="0">
       <span class="ob-emoji">🌱</span>
-      <h2 class="ob-title">Welcome to the DC Sustainability Optimizer</h2>
+      <h2 class="ob-title">Welcome to the Data Center Sustainability Optimizer</h2>
       <p class="ob-body">This tool helps technology leaders model the real environmental and financial impact of sustainability upgrades — and generate a board-ready business case in minutes.</p>
       <div class="ob-hint"><strong>Who this is for:</strong> CTOs, infrastructure leads, and sustainability officers building internal alignment around data center investment priorities.</div>
     </div>
@@ -399,37 +399,45 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
   <!-- RIGHT: COST/ROI + ENV + COMPLIANCE -->
   <div>
     <!-- COST & ROI PANEL -->
-    <div class="fin-summary" id="fin-summary-panel">
-      <div class="fin-summary-hd" onclick="toggleFinSummary()">
-        <span style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.04em">TOTAL SPEND &amp; ROI</span>
-        <span style="font-size:10px;color:var(--text3)" id="fin-summary-arrow">▼</span>
-      </div>
-      <div class="fin-summary-body" id="fin-summary-body">
-        <div class="fin-row"><span class="fin-row-label">Total CapEx</span><span class="fin-row-val" id="rs-capex">—</span></div>
-        <div class="fin-row"><span class="fin-row-label">Annual savings</span><span class="fin-row-val" style="color:var(--green)" id="rs-annual">—</span></div>
-        <div class="fin-row"><span class="fin-row-label">Break-even</span><span class="fin-row-val" id="rs-be">—</span></div>
-        <div class="fin-row"><span class="fin-row-label">5-year net</span><span class="fin-row-val" id="rs-5yr">—</span></div>
-        <div class="fin-row"><span class="fin-row-label">10-year net</span><span class="fin-row-val" id="rs-10yr">—</span></div>
-        <div id="rs-roi-pill"></div>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span class="section-label">TOTAL SPEND &amp; ROI</span>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Total CapEx</div>
+      <div class="env-val" id="rs-capex">—</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Annual savings</div>
+      <div class="env-val" style="color:var(--green)" id="rs-annual">—</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Break-even</div>
+      <div class="env-val" id="rs-be">—</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">5-year net</div>
+      <div class="env-val" id="rs-5yr">—</div>
+    </div>
+    <div class="env-card">
+      <div class="env-label">10-year net</div>
+      <div class="env-val" id="rs-10yr">—</div>
+    </div>
+    <div class="env-card" id="rs-roi-card" style="display:none">
+      <div class="env-label">Annual ROI on capital</div>
+      <div class="env-val" id="rs-roi-val" style="color:var(--green)">—</div>
     </div>
     <!-- MONTHS TO DEPLOY PANEL -->
-    <div class="fin-summary" id="months-deploy-card" style="margin-bottom:8px">
-      <div class="fin-summary-hd" onclick="toggleMonths()" style="cursor:pointer">
-        <span style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.04em">MONTHS TO DEPLOY</span>
-        <span style="font-size:10px;color:var(--text3)" id="months-arrow">▼</span>
-      </div>
-      <div id="months-body">
-        <div class="fin-summary-body" style="padding-bottom:8px">
-          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
-            <span style="font-size:28px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1" id="v-months-num">—</span>
-            <span style="font-size:12px;color:var(--text3)">months</span>
-            <span style="font-size:10px;color:var(--text3);margin-left:4px" id="v-months-range"></span>
-          </div>
-          <div id="v-months-phases" style="font-size:10px;color:var(--text3);line-height:1.8"></div>
-          <div style="font-size:9px;color:var(--text3);margin-top:6px;font-style:italic" id="v-months-sub">Add upgrades to see deployment timeline</div>
-        </div>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:4px">
+      <span class="section-label">MONTHS TO DEPLOY</span>
+    </div>
+    <div class="env-card">
+      <div class="env-label">Estimated deployment<span class="tip-i" onmouseenter="st(event,'Total calendar time to full deployment based on the longest-lead upgrade in your configuration. Phase 1 = 1–3 months, Phase 2 = 6–18 months, Phase 3 = 24–36 months.')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-months-num">—</span><span style="font-size:12px;color:var(--text3)"> months</span> <span style="font-size:11px;color:var(--text3)" id="v-months-range"></span></div>
+      <div id="v-months-sub" class="env-sub">Add upgrades to see timeline</div>
+    </div>
+    <div class="env-card" id="v-months-phases-card" style="display:none">
+      <div class="env-label">Phase breakdown</div>
+      <div id="v-months-phases" style="font-size:10px;color:var(--text3);line-height:1.9;margin-top:2px"></div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <span class="section-label">ANNUAL ENVIRONMENTAL IMPACT</span>
@@ -821,12 +829,15 @@ function rMetrics(){
         if(items.length) lines.push(`<span style="color:var(--text2)">${phaseNames[ph]}:</span> ${items.map(u=>u.name).join(', ')} <span style="opacity:.6">(${phaseRanges[ph]})</span>`);
       });
       if(mPhases) mPhases.innerHTML=lines.join('<br>');
+      const phCard=document.getElementById('v-months-phases-card');
+      if(phCard) phCard.style.display=lines.length?'block':'none';
       if(mSub) mSub.textContent=maxPhase>1?'Includes procurement, permitting & utility coordination':'Quick-win upgrades only · fast-track approval likely';
     } else {
       mNum.textContent='—';
       if(mRange) mRange.textContent='';
       if(mPhases) mPhases.innerHTML='';
       if(mSub) mSub.textContent='Add upgrades to see deployment timeline';
+      const _pc=document.getElementById('v-months-phases-card');if(_pc)_pc.style.display='none';
     }
   }
   const pct=Math.min(100,Math.round(rawCO2/(MAX_CO2_PER_SLOT*gridSlots)*100));
@@ -1376,28 +1387,15 @@ function cancelShrink(){
 }
 
 /* ═══════════════ FIN SUMMARY TOGGLE ═══════════════ */
-function toggleMonths(){
-  const body=document.getElementById('months-body');
-  const arrow=document.getElementById('months-arrow');
-  if(!body) return;
-  const open=body.style.display!=='none';
-  body.style.display=open?'none':'block';
-  if(arrow) arrow.textContent=open?'▶':'▼';
-}
-function toggleFinSummary(){
-  finSummaryOpen=!finSummaryOpen;
-  document.getElementById('fin-summary-body').style.display=finSummaryOpen?'block':'none';
-  document.getElementById('fin-summary-arrow').textContent=finSummaryOpen?'▼':'▶';
-}
 
 /* ═══════════════ RIGHT-RAIL FIN SUMMARY ═══════════════ */
 function rFinSummary(){
   const S=SIZES[sIdx], placed=grid.filter(Boolean);
-  const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;else el.style.color='';}};
+  const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;else el.style.color='';}};  // note: rs-roi-pill removed; use rs-roi-card
   const pill=document.getElementById('rs-roi-pill');
   if(!placed.length){
     ['rs-capex','rs-annual','rs-be','rs-5yr','rs-10yr'].forEach(id=>set(id,'—'));
-    if(pill) pill.innerHTML='';
+    const _rc=document.getElementById('rs-roi-card');if(_rc)_rc.style.display='none';
     return;
   }
   const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
@@ -1415,13 +1413,14 @@ function rFinSummary(){
   set('rs-5yr', (yr5>=0?'+':'')+fmt(yr5), yr5>=0?'var(--green)':'var(--red)');
   set('rs-10yr', (yr10>=0?'+':'')+fmt(yr10), yr10>=0?'var(--green)':'var(--red)');
 
-  // ROI pill
-  const roiColor=roiPct>=30?'#1a3d10':roiPct>=15?'#3B6D11':'#8a5a00';
-  const roiBg=roiPct>=30?'#c8e8b0':roiPct>=15?'var(--green-l)':'var(--amber-l)';
-  if(pill) pill.innerHTML=`<div class="roi-pill" style="background:${roiBg};color:${roiColor}">
-    <span style="font-size:16px;font-weight:600">${roiPct}%</span>
-    <span style="font-size:10px;font-weight:400">annual ROI on capital</span>
-  </div>`;
+  // ROI card (flat)
+  const roiCard=document.getElementById('rs-roi-card');
+  const roiVal=document.getElementById('rs-roi-val');
+  if(roiCard&&roiVal){
+    roiCard.style.display='block';
+    roiVal.textContent=roiPct+'%';
+    roiVal.style.color=roiPct>=30?'var(--green)':roiPct>=15?'var(--green)':'var(--amber)';
+  }
 }
 
 /* ═══════════════ MAIN RENDER ═══════════════ */
