@@ -18,23 +18,39 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
 
-/* ── ONBOARDING ── */
-#ob-overlay{position:fixed;inset:0;background:rgba(10,8,5,.65);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
-.ob-card{background:var(--surface);border-radius:18px;padding:40px 44px;max-width:520px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.22)}
-.ob-step{display:none}.ob-step.on{display:block}
-.ob-emoji{font-size:40px;margin-bottom:16px;display:block}
-.ob-title{font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)}
-.ob-body{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:16px}
-.ob-hint{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:12px 15px;font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:24px}
-.ob-hint strong{color:var(--text2)}
-.ob-dots{display:flex;gap:6px;margin-bottom:22px}
-.ob-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
-.ob-dot.on{background:var(--green-m)}
-.ob-nav{display:flex;justify-content:space-between;align-items:center}
-.btn-primary{padding:11px 28px;background:var(--green-m);color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+/* ── WELCOME SCREEN ── */
+#ob-overlay{position:fixed;inset:0;background:rgba(10,8,5,.7);z-index:500;display:flex;align-items:center;justify-content:center}
+.ob-card{background:var(--surface);border-radius:18px;padding:44px 48px;max-width:480px;width:92%;text-align:center}
+.ob-logo{width:52px;height:52px;border-radius:14px;background:var(--green-l);border:1.5px solid var(--green-m);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:22px}
+.ob-title{font-size:24px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.25}
+.ob-sub{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:28px}
+.ob-value-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px;text-align:left}
+.ob-val-item{background:var(--surface2);border-radius:9px;padding:10px 13px}
+.ob-val-icon{font-size:16px;margin-bottom:4px}
+.ob-val-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:2px}
+.ob-val-desc{font-size:10px;color:var(--text3);line-height:1.5}
+.btn-primary{padding:13px 36px;background:var(--green-m);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;width:100%}
 .btn-primary:hover{background:var(--green)}
-.btn-ghost{background:none;border:none;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;padding:4px}
-.btn-ghost:hover{color:var(--text2)}
+.ob-skip{display:block;margin-top:10px;font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit;width:100%}
+.ob-skip:hover{color:var(--text2)}
+
+/* ── SPOTLIGHT TOUR ── */
+#tour-overlay{position:fixed;inset:0;z-index:400;pointer-events:none;display:none}
+#tour-overlay.active{display:block}
+#tour-cutout{position:absolute;border-radius:12px;transition:all .35s cubic-bezier(.4,0,.2,1);box-shadow:0 0 0 9999px rgba(10,8,5,.72);pointer-events:none}
+#tour-callout{position:absolute;background:var(--surface);border-radius:13px;padding:18px 20px 16px;max-width:268px;width:268px;pointer-events:all;transition:left .32s ease,top .32s ease;overflow:visible;position:absolute}
+
+.tc-step{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--green-m);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.tc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
+.tc-body{font-size:11.5px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.tc-nav{display:flex;align-items:center;justify-content:space-between}
+.tc-next{padding:7px 18px;background:var(--green-m);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;pointer-events:all}
+.tc-next:hover{background:var(--green)}
+.tc-skip{font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit;pointer-events:all}
+.tc-skip:hover{color:var(--text2)}
+.tc-dots{display:flex;gap:5px;align-items:center}
+.tc-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:background .2s}
+.tc-dot.on{background:var(--green-m)}
 
 /* ── TOOLTIP ── */
 #tip{position:fixed;background:#202028;color:#eceadf;padding:9px 13px;border-radius:9px;font-size:11.5px;max-width:240px;line-height:1.55;z-index:400;pointer-events:none;opacity:0;transition:opacity .15s;font-family:'DM Sans',sans-serif}
@@ -260,50 +276,70 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
 .qty-btn:disabled{color:var(--border2);cursor:default}
 .qty-num{min-width:28px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text);border-left:0.5px solid var(--border);border-right:0.5px solid var(--border);height:24px;line-height:24px}
 .qty-label{font-size:9px;color:var(--text3);margin-left:6px;align-self:center}
+
+/* Tour callout arrow (managed via JS class) */
+#tour-callout{position:absolute;box-shadow:0 8px 32px rgba(0,0,0,.18);overflow:visible}
 </style>
 </head>
 <body>
 
-<!-- ONBOARDING -->
+<!-- WELCOME SCREEN -->
 <div id="ob-overlay">
 <div class="ob-card">
-  <div id="ob-inner">
-    <div class="ob-step on" data-s="0">
-      <span class="ob-emoji">🌱</span>
-      <h2 class="ob-title">Welcome to the Data Center Sustainability Optimizer</h2>
-      <p class="ob-body">This tool helps technology leaders model the real environmental and financial impact of sustainability upgrades — and generate a board-ready business case in minutes.</p>
-      <div class="ob-hint"><strong>Who this is for:</strong> CTOs, infrastructure leads, and sustainability officers building internal alignment around data center investment priorities.</div>
+  <div class="ob-logo">🌱</div>
+  <h2 class="ob-title">Data Center Sustainability Strategy Optimizer</h2>
+  <p class="ob-sub">Model the real financial and environmental impact of your sustainability investments — and generate a board-ready business case in minutes.</p>
+  <div class="ob-value-grid">
+    <div class="ob-val-item">
+      <div class="ob-val-icon">💰</div>
+      <div class="ob-val-label">ROI &amp; payback</div>
+      <div class="ob-val-desc">CapEx, break-even, 5 &amp; 10-year net returns</div>
     </div>
-    <div class="ob-step" data-s="1">
-      <span class="ob-emoji">🏢</span>
-      <h2 class="ob-title">Step 1 — Choose your facility size</h2>
-      <p class="ob-body">Select the scale that best matches your data center at the top of the page. All financial figures — CapEx, annual savings, and ROI — will scale automatically with your selection.</p>
-      <div class="ob-hint"><strong>Not sure?</strong> Start with <strong>Mid-size (~5 MW)</strong> — it's the most common scenario for enterprise planning conversations and gives the most relatable numbers.</div>
+    <div class="ob-val-item">
+      <div class="ob-val-icon">🌍</div>
+      <div class="ob-val-label">CO₂ impact</div>
+      <div class="ob-val-desc">Tons saved, PUE, WUE vs. peer benchmarks</div>
     </div>
-    <div class="ob-step" data-s="2">
-      <span class="ob-emoji">🖱️</span>
-      <h2 class="ob-title">Step 2 — Drag upgrades into your data center</h2>
-      <p class="ob-body">The upgrade panel is on the left. Each card has a ⠿ drag handle — grab it and drag right into any open slot in the grid. You can place multiple of the same upgrade or rearrange slots.</p>
-      <div class="ob-hint">Each card shows: CO₂ impact · upfront cost · implementation complexity · phase timing · compliance frameworks · and whether it reduces Scope 3 emissions.</div>
+    <div class="ob-val-item">
+      <div class="ob-val-icon">🗺</div>
+      <div class="ob-val-label">Implementation roadmap</div>
+      <div class="ob-val-desc">Phased 90-day to 3-year deployment plan</div>
     </div>
-    <div class="ob-step" data-s="3">
-      <span class="ob-emoji">📊</span>
-      <h2 class="ob-title">Step 3 — Explore four views of your impact</h2>
-      <p class="ob-body">As you configure your data center, four tabs update in real time:</p>
-      <div class="ob-hint">
-        <strong>Roadmap</strong> — phased 90-day → 3-year implementation plan<br>
-        <strong>Financials</strong> — CapEx, break-even, 10-year net with energy &amp; carbon price controls<br>
-        <strong>Peer Benchmarks</strong> — how your PUE &amp; WUE compare to Google, Microsoft, AWS<br>
-        <strong>Business Case</strong> — formatted summary ready to copy into a deck
+    <div class="ob-val-item">
+      <div class="ob-val-icon">📋</div>
+      <div class="ob-val-label">Business case export</div>
+      <div class="ob-val-desc">Formatted summary ready for your CFO or board</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="closeObStartTour()">Show me how it works →</button>
+  <button class="ob-skip" onclick="closeOb()">Skip — I'll explore on my own</button>
+</div>
+</div>
+
+<!-- SPOTLIGHT TOUR -->
+<div id="tour-overlay">
+  <div id="tour-cutout"></div>
+  <div id="tour-callout">
+    <div class="tc-step" id="tc-step-lbl">Step 1 of 6</div>
+    <div class="tc-title" id="tc-title">Set your facility size</div>
+    <div class="tc-body" id="tc-body">Start here. Pick Edge, Mid-size, Large, or Hyperscale.</div>
+    <div class="tc-nav">
+      <div class="tc-dots" id="tc-dots"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="tc-skip" onclick="closeTour()">Skip</button>
+        <button class="tc-next" id="tc-next-btn" onclick="tourNext()">Next →</button>
       </div>
     </div>
   </div>
-  <div class="ob-dots" id="ob-dots"></div>
-  <div class="ob-nav">
-    <button class="btn-ghost" onclick="closeOb()">Skip intro</button>
-    <button class="btn-primary" id="ob-next-btn" onclick="obNext()">Get started →</button>
+  <div id="tour-scroll-prompt" style="display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--surface);border-radius:12px;padding:16px 24px;box-shadow:0 8px 32px rgba(0,0,0,.22);flex-direction:column;align-items:center;gap:10px;z-index:410;pointer-events:all;max-width:320px;width:92%;text-align:center">
+    <div style="font-size:22px">👇</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text)">Scroll down to see your results</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.6">The Roadmap, Financials, Peer Benchmarks and Business Case tabs are just below. Scroll down and the tour will continue automatically.</div>
+    <div style="display:flex;gap:8px;margin-top:2px">
+      <button onclick="window.scrollBy({top:400,behavior:'smooth'})" style="padding:8px 20px;background:var(--green-m);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">Scroll down ↓</button>
+      <button onclick="closeTour()" style="padding:8px 16px;background:transparent;border:0.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text3);cursor:pointer">Skip</button>
+    </div>
   </div>
-</div>
 </div>
 
 <!-- TOOLTIP -->
@@ -321,7 +357,7 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
   <div class="hdr-right">
     <button class="mode-btn" id="mode-btn" onclick="toggleMode()" title="Toggle light / dark mode">🌙</button>
     <button class="reset-btn" onclick="resetAll()" title="Clear all upgrades and reset to defaults">↺ Reset</button>
-    <button class="tour-btn" onclick="startTour()">❓ How to use</button>
+    <button class="tour-btn" onclick="startTour()">↺ Guided tour</button>
     <span style="font-size:11px;color:var(--border2)">|</span>
     <span style="font-size:11.5px;color:var(--text3)">Facility size:</span>
     <div class="sz-group" id="sz-btns"></div>
@@ -374,7 +410,7 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
     </div>
     <div class="prog-label"><span>Sustainability potential unlocked</span><span id="pct">0%</span></div>
     <div class="prog-track"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
-    <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+    <div style="display:flex;gap:8px;margin-top:8px;align-items:center" id="slot-controls">
       <button class="expand-btn" id="shrink-btn" onclick="shrinkGrid()" style="flex:0 0 auto;width:38px;padding:9px 0;font-size:16px" title="Remove 4 slots (min 8)">−</button>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 12px;border:1.5px dashed var(--border2);border-radius:var(--radius);" id="slots-badge">
         <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)">
@@ -396,12 +432,8 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
     </div>
   </div>
 
-  <!-- RIGHT: COST/ROI + ENV + COMPLIANCE -->
-  <div>
-    <!-- COST & ROI PANEL -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <span class="section-label">TOTAL SPEND &amp; ROI</span>
-    </div>
+  <!-- RIGHT: KEY METRICS -->
+  <div id="right-rail">
     <div class="env-card">
       <div class="env-label">Total CapEx</div>
       <div class="env-val" id="rs-capex">—</div>
@@ -415,52 +447,29 @@ body.dark .s3{background:#201830!important;color:#c0a0e8!important}
       <div class="env-val" id="rs-be">—</div>
     </div>
     <div class="env-card">
-      <div class="env-label">5-year net</div>
-      <div class="env-val" id="rs-5yr">—</div>
-    </div>
-    <div class="env-card">
-      <div class="env-label">10-year net</div>
-      <div class="env-val" id="rs-10yr">—</div>
-    </div>
-    <div class="env-card" id="rs-roi-card" style="display:none">
-      <div class="env-label">Annual ROI on capital</div>
-      <div class="env-val" id="rs-roi-val" style="color:var(--green)">—</div>
-    </div>
-    <!-- MONTHS TO DEPLOY PANEL -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:4px">
-      <span class="section-label">MONTHS TO DEPLOY</span>
-    </div>
-    <div class="env-card">
-      <div class="env-label">Estimated deployment<span class="tip-i" onmouseenter="st(event,'Total calendar time to full deployment based on the longest-lead upgrade in your configuration. Phase 1 = 1–3 months, Phase 2 = 6–18 months, Phase 3 = 24–36 months.')" onmouseleave="ht()">?</span></div>
-      <div class="env-val"><span id="v-months-num">—</span><span style="font-size:12px;color:var(--text3)"> months</span> <span style="font-size:11px;color:var(--text3)" id="v-months-range"></span></div>
+      <div class="env-label">Estimated deployment<span class="tip-i" onmouseenter="st(event,'Total calendar time to full deployment. Phase 1 = 1–3 months, Phase 2 = 6–18 months, Phase 3 = 24–36 months.')" onmouseleave="ht()">?</span></div>
+      <div class="env-val"><span id="v-months-num">—</span><span style="font-size:12px;color:var(--text3)" id="v-months-range"> months</span></div>
       <div id="v-months-sub" class="env-sub">Add upgrades to see timeline</div>
     </div>
-    <div class="env-card" id="v-months-phases-card" style="display:none">
-      <div class="env-label">Phase breakdown</div>
-      <div id="v-months-phases" style="font-size:10px;color:var(--text3);line-height:1.9;margin-top:2px"></div>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <span class="section-label">ANNUAL ENVIRONMENTAL IMPACT</span>
-    </div>
     <div class="env-card">
-      <div class="env-label">CO₂ saved<span class="tip-i" onmouseenter="st(event,'Metric tons of CO₂ emissions avoided per year vs. a fossil-fuel baseline. Scales with your facility size selection.')" onmouseleave="ht()">?</span></div>
+      <div class="env-label">CO₂ saved<span class="tip-i" onmouseenter="st(event,'Metric tons of CO₂ avoided per year vs. a fossil-fuel baseline. Scales with your facility size.')" onmouseleave="ht()">?</span></div>
       <div class="env-val"><span id="v-co2">0</span><span style="font-size:12px;color:var(--text3)"> t/yr</span></div>
     </div>
     <div class="env-card">
-      <div class="env-label">Trees equivalent<span class="tip-i" onmouseenter="st(event,'Tree seedlings that would need to grow for 10 years to sequester the same CO₂ (EPA GHG Equivalencies Calculator: 16.5 seedlings per metric ton).')" onmouseleave="ht()">?</span></div>
+      <div class="env-label">Trees equivalent<span class="tip-i" onmouseenter="st(event,'Tree seedlings that would grow for 10 years to sequester the same CO₂ (EPA: 16.5 seedlings per metric ton).')" onmouseleave="ht()">?</span></div>
       <div class="env-val"><span id="v-trees">0</span></div>
       <div class="env-sub">seedlings × 10 yrs · EPA</div>
     </div>
-    <div class="compliance-box" id="comp-box">
-      <div style="font-size:10px;color:var(--text3);margin-bottom:6px">COMPLIANCE COVERAGE</div>
-      <div id="v-comp" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    <div id="scroll-hint" style="display:none;margin-top:12px;padding:10px 12px;background:var(--green-l);border-radius:9px;border:0.5px solid var(--green-m);text-align:center">
+      <div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:2px">Results ready ↓</div>
+      <div style="font-size:10px;color:var(--green-m)">Scroll down to view your Roadmap &amp; Financials</div>
     </div>
   </div>
 
 </div><!-- /main-grid -->
 
 <!-- TABS -->
-<div class="tabs-section">
+<div class="tabs-section" id="tabs-section">
   <div class="tab-bar">
     <button class="tab-btn on" onclick="showTab('roadmap',this)">🗺 Roadmap</button>
     <button class="tab-btn" onclick="showTab('financials',this)">💰 Financials</button>
@@ -697,22 +706,167 @@ function rStepBar(){
     </div>`).join('');
 }
 
-// Onboarding
-const OB_TOTAL=4;
-function rObDots(){
-  document.getElementById('ob-dots').innerHTML=Array.from({length:OB_TOTAL},(_,i)=>
-    `<div class="ob-dot${i===obStep?' on':''}"></div>`).join('');
-}
-function obNext(){
-  obStep++;
-  if(obStep>=OB_TOTAL){closeOb();return;}
-  document.querySelectorAll('.ob-step').forEach((el,i)=>el.classList.toggle('on',i===obStep));
-  document.getElementById('ob-next-btn').textContent=obStep===OB_TOTAL-1?'Start exploring →':'Next →';
-  rObDots();
-}
+// Onboarding & Spotlight Tour
 function closeOb(){document.getElementById('ob-overlay').style.display='none';}
-function startTour(){obStep=0;document.querySelectorAll('.ob-step').forEach((el,i)=>el.classList.toggle('on',i===0));document.getElementById('ob-next-btn').textContent='Next →';rObDots();document.getElementById('ob-overlay').style.display='flex';}
-rObDots();
+function closeObStartTour(){closeOb();setTimeout(startTour,300);}
+function startTour(){
+  document.getElementById('tour-overlay').classList.add('active');
+  tourStep=0;
+  renderTourStep();
+}
+
+const TOUR_STEPS=[
+  {
+    target:'sz-btns',
+    title:'Set your facility size',
+    body:'Start here. Pick Edge, Mid-size, Large, or Hyperscale — every number on the page updates instantly.',
+    arrow:'left'
+  },
+  {
+    target:'pool',
+    title:'Your upgrade options',
+    body:'Each card is a sustainability initiative. Use − / + to set quantity, then drag it right into the grid.',
+    arrow:'right'
+  },
+  {
+    target:'dc-grid',
+    title:'Drop upgrades here',
+    body:'Drag cards from the left into any open slot. The metrics on the right update as you build.',
+    arrow:'top'
+  },
+  {
+    target:'slot-controls',
+    title:'Need more space?',
+    body:'Tap ＋ to buy 4 more slots. Tap − to remove them. Each 4-slot pack costs $1M at mid-size scale.',
+    arrow:'top'
+  },
+  {
+    target:'right-rail',
+    title:'Your live results',
+    body:'CapEx, break-even, savings, deployment time, and CO₂ impact — all update as you drag.',
+    arrow:'left'
+  },
+  {
+    target:'tabs-section',
+    title:'Scroll down for the full picture',
+    body:'Roadmap, Financials, Peer Benchmarks, and Business Case — all built from your configuration.',
+    arrow:'top'
+  },
+];
+
+let tourStep=0;
+function renderTourStep(){
+  const step=TOUR_STEPS[tourStep];
+  const total=TOUR_STEPS.length;
+  // find target element
+  let el=document.getElementById(step.target);
+  if(!el) el=document.querySelector('.'+step.target);
+  // update callout text
+  // Step label: "Step 1 of 6  ● ○ ○ ○ ○ ○"
+  document.getElementById('tc-step-lbl').innerHTML=`Step ${tourStep+1} of ${total}`;
+  document.getElementById('tc-title').textContent=step.title;
+  document.getElementById('tc-body').textContent=step.body;
+  document.getElementById('tc-next-btn').textContent=tourStep===total-1?'Done ✓':'Next →';
+  // dots — inline with step label
+  document.getElementById('tc-dots').innerHTML=Array.from({length:total},(_,i)=>
+    `<div class="tc-dot${i===tourStep?' on':''}"></div>`).join('');
+  // also append dots to step label for at-a-glance progress
+  const stepLbl=document.getElementById('tc-step-lbl');
+  if(stepLbl){
+    const dotsHtml='<span style="display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle">'+
+      Array.from({length:total},(_,i)=>`<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:${i===tourStep?'var(--green-m)':'var(--border2)'}"></span>`).join('')+'</span>';
+    stepLbl.innerHTML='Step '+(tourStep+1)+' of '+total+dotsHtml;
+  }
+  // position spotlight
+  if(el){
+    const isLast=(tourStep===TOUR_STEPS.length-1);
+    const inView=()=>{
+      const r=el.getBoundingClientRect();
+      return r.top>=0&&r.bottom<=(window.innerHeight||document.documentElement.clientHeight);
+    };
+    // For last step (tabs): if not in viewport, show scroll prompt instead
+    if(isLast&&!inView()){
+      showScrollPrompt();
+      return;
+    }
+    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    setTimeout(()=>{
+      const pad=14;
+      const r=el.getBoundingClientRect();
+      const cut=document.getElementById('tour-cutout');
+      // overlay is position:fixed — use viewport coords directly (no scrollY)
+      cut.style.left=(r.left-pad)+'px';
+      cut.style.top=(r.top-pad)+'px';
+      cut.style.width=(r.width+pad*2)+'px';
+      cut.style.height=(r.height+pad*2)+'px';
+      posCallout(r,step.arrow||'top',pad);
+    },320);
+  }
+}
+function posCallout(r,arrow,pad){
+  const cw=268, gap=16;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const co=document.getElementById('tour-callout');
+  const ch=co.offsetHeight||160;
+  let left,top;
+  if(arrow==='bottom'){
+    left=r.left+r.width/2-cw/2;
+    top=r.top-ch-gap-pad;
+  } else if(arrow==='top'){
+    left=r.left+r.width/2-cw/2;
+    top=r.bottom+gap+pad;
+  } else if(arrow==='right'){
+    left=r.right+gap+pad;
+    top=r.top+r.height/2-ch/2;
+  } else { // left
+    left=r.left-cw-gap-pad;
+    top=r.top+r.height/2-ch/2;
+  }
+  // clamp to viewport
+  left=Math.max(14,Math.min(vw-cw-14,left));
+  top=Math.max(14,Math.min(vh-ch-14,top));
+  co.style.left=left+'px';
+  co.style.top=top+'px';
+}
+
+function tourNext(){
+  // hide scroll prompt if shown
+  const sp=document.getElementById('tour-scroll-prompt');
+  if(sp) sp.style.display='none';
+  tourStep++;
+  if(tourStep>=TOUR_STEPS.length){closeTour();return;}
+  renderTourStep();
+}
+function closeTour(){
+  document.getElementById('tour-overlay').classList.remove('active');
+  const sp=document.getElementById('tour-scroll-prompt');
+  if(sp) sp.style.display='none';
+}
+function showScrollPrompt(){
+  // hide spotlight, show a fixed prompt asking user to scroll
+  const cut=document.getElementById('tour-cutout');
+  if(cut){cut.style.width='0';cut.style.height='0';}
+  const sp=document.getElementById('tour-scroll-prompt');
+  if(sp) sp.style.display='flex';
+}
+// Watch for scroll — if prompt is showing and tabs become visible, auto-advance
+window.addEventListener('scroll',function(){
+  const sp=document.getElementById('tour-scroll-prompt');
+  if(!sp||sp.style.display==='none') return;
+  const el=document.getElementById('tabs-section');
+  if(!el) return;
+  const r=el.getBoundingClientRect();
+  if(r.top>=0&&r.top<window.innerHeight-80){
+    sp.style.display='none';
+    setTimeout(renderTourStep,200);
+  }
+},{passive:true});
+// Allow clicking outside callout to advance
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('tour-overlay').addEventListener('click',function(e){
+    if(!document.getElementById('tour-callout').contains(e.target)) tourNext();
+  });
+});
 
 /* ═══════════════ TOOLTIP ═══════════════ */
 const tipEl=document.getElementById('tip');
@@ -811,33 +965,19 @@ function rMetrics(){
   // Months to deploy
   const mNum=document.getElementById('v-months-num');
   const mRange=document.getElementById('v-months-range');
-  const mPhases=document.getElementById('v-months-phases');
   const mSub=document.getElementById('v-months-sub');
   if(mNum){
     if(placed.length){
       const maxPhase=Math.max(...placed.map(u=>u.phase));
       const monthsMap={1:2,2:12,3:30};
-      const rangeMap={1:'(1–3 mo)',2:'(6–18 mo)',3:'(24–36 mo)'};
+      const labelMap={1:'months (0–90 days)',2:'months (6–18 mo)',3:'months (24–36 mo)'};
       mNum.textContent=monthsMap[maxPhase];
-      if(mRange) mRange.textContent=rangeMap[maxPhase];
-      // Phase breakdown
-      const phaseNames={1:'Phase 1 · Quick wins',2:'Phase 2 · Infrastructure',3:'Phase 3 · Capital projects'};
-      const phaseRanges={1:'0–90 days',2:'6–18 months',3:'24–36 months'};
-      let lines=[];
-      [1,2,3].forEach(ph=>{
-        const items=placed.filter(u=>u.phase===ph);
-        if(items.length) lines.push(`<span style="color:var(--text2)">${phaseNames[ph]}:</span> ${items.map(u=>u.name).join(', ')} <span style="opacity:.6">(${phaseRanges[ph]})</span>`);
-      });
-      if(mPhases) mPhases.innerHTML=lines.join('<br>');
-      const phCard=document.getElementById('v-months-phases-card');
-      if(phCard) phCard.style.display=lines.length?'block':'none';
-      if(mSub) mSub.textContent=maxPhase>1?'Includes procurement, permitting & utility coordination':'Quick-win upgrades only · fast-track approval likely';
+      if(mRange) mRange.textContent=' '+labelMap[maxPhase];
+      if(mSub) mSub.textContent=maxPhase>1?'Includes procurement & permitting':'Quick wins — fast-track approval';
     } else {
       mNum.textContent='—';
-      if(mRange) mRange.textContent='';
-      if(mPhases) mPhases.innerHTML='';
-      if(mSub) mSub.textContent='Add upgrades to see deployment timeline';
-      const _pc=document.getElementById('v-months-phases-card');if(_pc)_pc.style.display='none';
+      if(mRange) mRange.textContent=' months';
+      if(mSub) mSub.textContent='Add upgrades to see timeline';
     }
   }
   const pct=Math.min(100,Math.round(rawCO2/(MAX_CO2_PER_SLOT*gridSlots)*100));
@@ -864,9 +1004,8 @@ function rMetrics(){
   document.getElementById('wue-f').style.background=wue<1.0?'var(--green-m)':wue<1.4?'#c8a020':'#E24B4A';
   // Compliance
   const allTags=[...new Set(placed.flatMap(u=>u.tags))];
-  const cBox=document.getElementById('comp-box');
-  if(allTags.length){cBox.style.display='block';document.getElementById('v-comp').innerHTML=tagPills(allTags);}
-  else cBox.style.display='none';
+  const cBox=null; // removed
+  // compliance tags removed from right rail
 }
 
 /* ═══════════════ RENDER: ROADMAP ═══════════════ */
@@ -1386,53 +1525,26 @@ function cancelShrink(){
   if(box) box.classList.remove('show');
 }
 
-/* ═══════════════ FIN SUMMARY TOGGLE ═══════════════ */
-
-/* ═══════════════ RIGHT-RAIL FIN SUMMARY ═══════════════ */
-function rFinSummary(){
-  const S=SIZES[sIdx], placed=grid.filter(Boolean);
-  const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;else el.style.color='';}};  // note: rs-roi-pill removed; use rs-roi-card
-  const pill=document.getElementById('rs-roi-pill');
-  if(!placed.length){
-    ['rs-capex','rs-annual','rs-be','rs-5yr','rs-10yr'].forEach(id=>set(id,'—'));
-    const _rc=document.getElementById('rs-roi-card');if(_rc)_rc.style.display='none';
-    return;
-  }
-  const rawCO2=placed.reduce((s,u)=>s+u.co2,0);
-  const upgradeCapex=placed.reduce((s,u)=>s+u.capex,0)*S.fm;
-  const capex=upgradeCapex+slotExpansionCost;
-  const carbonVal=rawCO2*S.cm*CPS[cpIdx].v;
-  const annual=placed.reduce((s,u)=>s+u.sav,0)*S.sm+carbonVal;
-  const yr5=annual*5-capex, yr10=annual*10-capex;
-  const be=annual>0?capex/annual:null;
-  const roiPct=capex>0?Math.round((annual/capex)*100):0;
-
-  set('rs-capex', fmt(capex));
-  set('rs-annual', fmt(annual)+'/yr', 'var(--green)');
-  set('rs-be', be?(be<1?'< 1 yr':be.toFixed(1)+' yrs'):'—');
-  set('rs-5yr', (yr5>=0?'+':'')+fmt(yr5), yr5>=0?'var(--green)':'var(--red)');
-  set('rs-10yr', (yr10>=0?'+':'')+fmt(yr10), yr10>=0?'var(--green)':'var(--red)');
-
-  // ROI card (flat)
-  const roiCard=document.getElementById('rs-roi-card');
-  const roiVal=document.getElementById('rs-roi-val');
-  if(roiCard&&roiVal){
-    roiCard.style.display='block';
-    roiVal.textContent=roiPct+'%';
-    roiVal.style.color=roiPct>=30?'var(--green)':roiPct>=15?'var(--green)':'var(--amber)';
-  }
-}
 
 /* ═══════════════ MAIN RENDER ═══════════════ */
 function render(){
   rSortBar();rPool();rGrid();rMetrics();rFinSummary();
-  const active=document.querySelector('.tab-btn.on');
-  if(active){
-    const id=active.onclick.toString().match(/'(\w+)'/)?.[1];
-    if(id==='financials')rFinancials();
-    else if(id==='benchmarks')rBenchmarks();
-    else if(id==='bizcase')rBizCase();
-  }
+  const _at=document.querySelector('.tab-btn.on')?.textContent||'';
+  if(_at.includes('Scenarios'))rScenarios();
+  if(_at.includes('Compliance'))rRegTimeline();
+  if(_at.includes('Next'))rNextSteps();
+}
+
+/* ═══════════════ TABS ═══════════════ */
+function showTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+  if(id==='roadmap')rRoadmap();
+  if(id==='financials')rFinancials();
+  if(id==='benchmarks')rBenchmarks();
+  if(id==='bizcase')rBizCase();
 }
 
 render();
