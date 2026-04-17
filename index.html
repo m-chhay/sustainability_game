@@ -37,8 +37,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 /* ── SPOTLIGHT TOUR ── */
 #tour-overlay{position:fixed;inset:0;z-index:400;pointer-events:none;display:none}
 #tour-overlay.active{display:block}
-#tour-cutout{position:absolute;border-radius:12px;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 0 9999px rgba(10,8,5,.72);pointer-events:none;width:0;height:0;opacity:0}
-#tour-callout{position:absolute;background:var(--surface);border-radius:13px;padding:18px 20px 16px;max-width:268px;width:268px;pointer-events:all;transition:left .28s ease,top .28s ease,opacity .18s ease;overflow:visible;opacity:0;left:-9999px;top:-9999px}
+#tour-cutout{position:absolute;border-radius:12px;transition:left .48s cubic-bezier(.4,0,.2,1),top .48s cubic-bezier(.4,0,.2,1),width .42s cubic-bezier(.4,0,.2,1),height .42s cubic-bezier(.4,0,.2,1),opacity .3s ease;box-shadow:0 0 0 9999px rgba(10,8,5,.68);pointer-events:none;width:0;height:0;opacity:0}
+#tour-callout{position:absolute;background:var(--surface);border-radius:14px;padding:20px 22px 18px;max-width:272px;width:272px;pointer-events:all;transition:left .45s cubic-bezier(.34,1.2,.64,1),top .45s cubic-bezier(.34,1.2,.64,1),opacity .22s ease;overflow:visible;opacity:0;left:-9999px;top:-9999px;box-shadow:0 8px 40px rgba(0,0,0,.18)}
 
 .tc-step{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--green-m);margin-bottom:5px;display:flex;align-items:center;gap:6px}
 .tc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
@@ -784,31 +784,47 @@ function renderTourStep(){
       const r=el.getBoundingClientRect();
       return r.top>=0&&r.bottom<=(window.innerHeight||document.documentElement.clientHeight);
     };
-    // For last step (tabs): if not in viewport, show scroll prompt instead
     if(isLast&&!inView()){
       showScrollPrompt();
       return;
     }
-    el.scrollIntoView({behavior:'smooth',block:'nearest'});
-    // hide before repositioning to prevent flash at old position
     const co=document.getElementById('tour-callout');
     const cut=document.getElementById('tour-cutout');
+    const pad=14;
+    // Step 1: fade callout out immediately
     if(co) co.style.opacity='0';
-    if(cut){cut.style.opacity='0';cut.style.width='0';cut.style.height='0';}
+    // Step 2: scroll element into view
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    // Step 3: after scroll settles, animate cutout to new target
     setTimeout(()=>{
-      const pad=14;
       const r=el.getBoundingClientRect();
       if(cut){
-        cut.style.left=(r.left-pad)+'px';
-        cut.style.top=(r.top-pad)+'px';
-        cut.style.width=(r.width+pad*2)+'px';
-        cut.style.height=(r.height+pad*2)+'px';
-        cut.style.opacity='1';
+        // if first time (opacity 0), jump to position first, then fade in
+        const firstTime=(parseFloat(cut.style.opacity||0)===0);
+        if(firstTime){
+          cut.style.transition='none';
+          cut.style.left=(r.left-pad)+'px';
+          cut.style.top=(r.top-pad)+'px';
+          cut.style.width=(r.width+pad*2)+'px';
+          cut.style.height=(r.height+pad*2)+'px';
+          // force reflow then restore transition
+          cut.offsetHeight;
+          cut.style.transition='';
+          cut.style.opacity='1';
+        } else {
+          // smooth slide to new position
+          cut.style.left=(r.left-pad)+'px';
+          cut.style.top=(r.top-pad)+'px';
+          cut.style.width=(r.width+pad*2)+'px';
+          cut.style.height=(r.height+pad*2)+'px';
+          cut.style.opacity='1';
+        }
       }
+      // Step 4: position callout offscreen first, then slide in after cutout starts moving
       posCallout(r,step.arrow||'top',pad);
-      // fade callout in after position is set
-      setTimeout(()=>{if(co) co.style.opacity='1';},40);
-    },320);
+      // Step 5: fade callout in after a short delay (cutout transition mid-way)
+      setTimeout(()=>{if(co) co.style.opacity='1';},220);
+    },380);
   }
 }
 function posCallout(r,arrow,pad){
@@ -838,17 +854,26 @@ function posCallout(r,arrow,pad){
 }
 
 function tourNext(){
-  // hide scroll prompt if shown
   const sp=document.getElementById('tour-scroll-prompt');
   if(sp) sp.style.display='none';
-  tourStep++;
-  if(tourStep>=TOUR_STEPS.length){closeTour();return;}
-  renderTourStep();
+  const co=document.getElementById('tour-callout');
+  // fade callout out before moving to next step
+  if(co) co.style.opacity='0';
+  setTimeout(()=>{
+    tourStep++;
+    if(tourStep>=TOUR_STEPS.length){closeTour();return;}
+    renderTourStep();
+  },180);
 }
 function closeTour(){
-  document.getElementById('tour-overlay').classList.remove('active');
+  const co=document.getElementById('tour-callout');
+  const cut=document.getElementById('tour-cutout');
+  const ov=document.getElementById('tour-overlay');
+  if(co) co.style.opacity='0';
+  if(cut){cut.style.opacity='0';cut.style.width='0';cut.style.height='0';}
   const sp=document.getElementById('tour-scroll-prompt');
   if(sp) sp.style.display='none';
+  setTimeout(()=>{if(ov) ov.classList.remove('active');},320);
 }
 function showScrollPrompt(){
   // hide spotlight, show a fixed prompt asking user to scroll
