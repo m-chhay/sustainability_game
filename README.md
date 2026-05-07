@@ -6,7 +6,7 @@ investments — and generate a board-ready business case.
 
 Live demo: https://m-chhay.github.io/sustainability_game/
 
-**Best experienced on desktop.
+Best experienced on desktop.
 
 ---
 
