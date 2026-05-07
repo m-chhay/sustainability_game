@@ -2,7 +2,7 @@
 
 An interactive planning tool for technology leaders to model the 
 financial and environmental impact of data center sustainability 
-investments — and generate a board-ready business case.
+investments.
 
 Live demo: https://m-chhay.github.io/sustainability_game/
 
